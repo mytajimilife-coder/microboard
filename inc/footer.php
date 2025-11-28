@@ -6,6 +6,7 @@
                 <div class="footer-section">
                     <h3>MicroBoard</h3>
                     <p><?php echo $lang['board_list']; ?> <?php echo $lang['system']; ?></p>
+                    <p><a href="../about.php" style="color: #ccc; text-decoration: none; font-size: 0.9em;">About MicroBoard</a></p>
                 </div>
                 
                 <div class="footer-section">
@@ -56,7 +57,7 @@
                 </div>
                 
                 <div class="copyright">
-                    &copy; <?php echo date('Y'); ?> MicroBoard. <?php echo $lang['board_list']; ?>.
+                    &copy; <?php echo date('Y'); ?> MicroBoard. Version <?php echo defined('MICROBOARD_VERSION') ? MICROBOARD_VERSION : '1.0.0'; ?>.
                 </div>
             </div>
         </div>

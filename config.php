@@ -7,6 +7,9 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'gnuboard5');
 
+// 버전 정보
+define('MICROBOARD_VERSION', '1.0.0');
+
 // DB 연결
 function getDB() {
   static $pdo = null;
