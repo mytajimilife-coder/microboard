@@ -1,0 +1,229 @@
+/* Header Styles - MicroBoard Header Component */
+
+/* 헤더 기본 스타일 */
+.header {
+    background: #2c3e50;
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* 헤더 컨테이너 */
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 로고 스타일 */
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+.logo:hover {
+    color: #3498db;
+}
+
+/* 메인 네비게이션 */
+.main-nav {
+    flex: 1;
+    margin-left: 30px;
+}
+
+/* 네비게이션 메뉴 */
+.nav-menu {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-menu a:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+.nav-menu a:active {
+    background: rgba(255,255,255,0.2);
+}
+
+/* 현재 페이지 표시 */
+.nav-menu a.active {
+    background: #3498db;
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+}
+
+/* 사용자 정보 영역 */
+.user-info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.user-info .username {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* 버튼 스타일 */
+.btn {
+    background: #3498db;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+.btn.secondary {
+    background: #95a5a6;
+}
+
+.btn.secondary:hover {
+    background: #7f8c8d;
+    transform: translateY(-1px);
+}
+
+.btn.danger {
+    background: #e74c3c;
+}
+
+.btn.danger:hover {
+    background: #c0392b;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+    min-height: calc(100vh - 140px);
+    padding: 20px 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .header-container {
+        padding: 0 15px;
+    }
+    
+    .nav-menu {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 0 10px;
+    }
+    
+    .main-nav {
+        margin-left: 0;
+        order: 3;
+        width: 100%;
+    }
+    
+    .nav-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        order: 2;
+    }
+    
+    .logo {
+        order: 1;
+    }
+    
+    .main-content {
+        padding: 15px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-container {
+        padding: 0 5px;
+    }
+    
+    .nav-menu {
+        gap: 5px;
+    }
+    
+    .nav-menu a {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .logo {
+        font-size: 20px;
+    }
+    
+    .user-info .username {
+        font-size: 13px;
+    }
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* 접근성 */
+.header a:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+}
+
+/* 인쇄 최적화 */
+@media print {
+    .header {
+        display: none;
+    }
+    
+    .main-content {
+        padding: 0;
+    }
+}
