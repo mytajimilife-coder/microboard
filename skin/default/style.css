@@ -1,0 +1,103 @@
+/* MicroBoard Default Skin - Main Styles */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f8f9fa;
+  color: #333;
+}
+
+.list-page {
+  padding: 20px 0;
+}
+
+.write-page,
+.view-page,
+.login-page,
+.register-page {
+  padding: 20px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #dee2e6;
+}
+
+th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+tr:hover {
+  background: #f1f3f4;
+}
+
+input, textarea, button {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 300px;
+}
+
+button {
+  background: #007cba;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  padding: 10px;
+}
+
+.btn {
+  padding: 5px 10px;
+  background: #007cba;
+  color: white;
+  text-decoration: none;
+  border-radius: 3px;
+  display: inline-block;
+  margin: 5px;
+}
+
+.btn:hover, button:hover {
+  background: #005a87;
+}
+
+.logout {
+  float: right;
+  color: red;
+}
+
+.error {
+  color: red;
+}
+
+.content {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 20px 0;
+  line-height: 1.6;
+}
+
+.back {
+  float: left;
+}
+
+#summernote {
+  width: 100%;
+  min-height: 300px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}

@@ -1,0 +1,253 @@
+/* Footer Styles - MicroBoard Footer Component */
+
+/* 푸터 기본 스타일 */
+.footer {
+    background: #34495e;
+    color: #ecf0f1;
+    padding: 40px 0 20px;
+    margin-top: 40px;
+}
+
+/* 푸터 컨테이너 */
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 푸터 내용 */
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* 푸터 섹션 */
+.footer-section {
+    flex: 1;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.footer-section h3,
+.footer-section h4 {
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.footer-section h3 {
+    font-size: 18px;
+}
+
+.footer-section h4 {
+    font-size: 16px;
+}
+
+.footer-section p {
+    color: #bdc3c7;
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+/* 푸터 링크 */
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section li {
+    margin-bottom: 8px;
+}
+
+.footer-section a {
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.footer-section a:hover {
+    color: #3498db;
+    padding-left: 5px;
+}
+
+/* 푸터 하단 */
+.footer-bottom {
+    border-top: 1px solid #4a5568;
+    padding-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+/* 언어 선택기 */
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.language-selector strong {
+    color: #fff;
+    font-size: 14px;
+}
+
+.language-selector select {
+    background: #2c3e50;
+    color: #fff;
+    border: 1px solid #4a5568;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.language-selector select:hover {
+    border-color: #3498db;
+    background: #34495e;
+}
+
+.language-selector option {
+    background: #34495e;
+    color: #fff;
+}
+
+/* 저작권 정보 */
+.copyright {
+    color: #bdc3c7;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+    .footer-container {
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        padding: 0 10px;
+    }
+    
+    .footer-content {
+        gap: 20px;
+    }
+    
+    .footer-section {
+        flex: 1 1 100%;
+        min-width: 100%;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .language-selector {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-container {
+        padding: 0 5px;
+    }
+    
+    .footer {
+        padding: 30px 0 15px;
+    }
+    
+    .footer-content {
+        gap: 15px;
+    }
+    
+    .footer-section h3 {
+        font-size: 16px;
+    }
+    
+    .footer-section h4 {
+        font-size: 14px;
+    }
+    
+    .footer-section a {
+        font-size: 13px;
+    }
+    
+    .copyright {
+        font-size: 12px;
+    }
+}
+
+/* 애니메이션 */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.footer {
+    animation: slideUp 0.5s ease-out;
+}
+
+.footer-section {
+    animation: slideUp 0.5s ease-out;
+    animation-delay: 0.1s;
+    animation-fill-mode: backwards;
+}
+
+/* 접근성 */
+.footer a:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.footer-section select:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+    border-color: #3498db;
+}
+
+/* 인쇄 최적화 */
+@media print {
+    .footer {
+        background: #fff;
+        color: #000;
+        border-top: 1px solid #000;
+    }
+    
+    .footer-section a {
+        color: #000;
+        text-decoration: underline;
+    }
+    
+    .copyright {
+        color: #000;
+        font-weight: bold;
+    }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+    .footer {
+        background: #2c3e50;
+    }
+    
+    .footer-container {
+        color: #ecf0f1;
+    }
+}
