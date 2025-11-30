@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MicroBoard - Documentation</title>
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/content.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .doc-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .doc-section h2 {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            color: #007cba;
+        }
+
+        .doc-section h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .doc-section ul,
+        .doc-section ol {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .doc-section li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: #f1f3f5;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, monospace;
+            color: #e83e8c;
+        }
+
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="https://github.com/yourusername/microboard"
+                    style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: white;">
+                    <img src="../img/logo.svg" alt="MicroBoard Logo" style="height: 32px; width: 32px;">
+                    MicroBoard
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <ul class="nav-menu">
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#usage">Usage</a></li>
+                    <li><a href="https://github.com/yourusername/microboard" target="_blank">GitHub</a></li>
+                </ul>
+            </nav>
+
+            <div class="user-info">
+                <a href="https://github.com/yourusername/microboard/archive/refs/heads/main.zip" class="btn">Download
+                    v1.0.0</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="content-wrapper" style="max-width: 900px; margin: 0 auto; padding: 40px 20px;">
+            <div style="text-align: center; margin-bottom: 50px;">
+                <h1 style="font-size: 3em; color: #2c3e50; margin-bottom: 10px;">MicroBoard</h1>
+                <p style="font-size: 1.3em; color: #7f8c8d;">Lightweight, Multi-language PHP Bulletin Board System</p>
+                <div style="margin-top: 20px;">
+                    <span
+                        style="background: #3498db; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em;">v1.0.0</span>
+                    <span
+                        style="background: #2ecc71; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; margin-left: 10px;">MIT
+                        License</span>
+                </div>
+            </div>
+
+            <div id="about" class="doc-section">
+                <h2>About MicroBoard</h2>
+                <p style="line-height: 1.6; color: #444;">
+                    MicroBoard is a lightweight, high-performance bulletin board system designed for simplicity and ease
+                    of use.
+                    Built with modern PHP standards, it offers a robust platform for community engagement without the
+                    bloat of larger CMS platforms.
+                </p>
+
+                <h3>Key Features</h3>
+                <ul style="list-style-type: none; padding: 0;">
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>🚀 Lightweight & Fast:</strong> Optimized for performance with minimal dependencies.
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>🌍 Multi-language Support:</strong> Native support for Korean, English, Japanese, and
+                        Chinese.
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>🔒 Secure:</strong> Built-in protection against common web vulnerabilities.
+                    </li>
+                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                        <strong>📱 Responsive Design:</strong> Works perfectly on desktop, tablet, and mobile devices.
+                    </li>
+                </ul>
+            </div>
+
+            <div id="requirements" class="doc-section">
+                <h2>System Requirements</h2>
+                <ul>
+                    <li><strong>PHP</strong>: 7.4 or higher</li>
+                    <li><strong>MySQL</strong>: 5.7 or higher (or MariaDB equivalent)</li>
+                    <li><strong>Web Server</strong>: Apache, Nginx, or any server capable of running PHP</li>
+                </ul>
+            </div>
+
+            <div id="installation" class="doc-section">
+                <h2>Installation Guide</h2>
+
+                <h3>1. Download</h3>
+                <p>Clone or download this repository to your web server's document root or a subdirectory.</p>
+                <pre><code>git clone https://github.com/yourusername/microboard.git</code></pre>
+
+                <h3>2. Permissions</h3>
+                <p>Ensure the web server has write permissions to the root directory of the project. The installer needs
+                    to create a <code>config.php</code> file.</p>
+                <pre><code>chmod 777 . 
+# OR better yet, give ownership to the web user (e.g., www-data)
+# chown www-data:www-data .</code></pre>
+
+                <h3>3. Run Installer</h3>
+                <p>Open your web browser and navigate to the installation page.</p>
+                <ul>
+                    <li>Example: <code>http://yourdomain.com/microboard/install.php</code></li>
+                    <li>If you access <code>index.php</code> before installation, you will be automatically redirected
+                        to <code>install.php</code>.</li>
+                </ul>
+
+                <h3>4. Configuration</h3>
+                <p>Fill in the required information on the installation screen:</p>
+                <ul>
+                    <li><strong>Language</strong>: Select your preferred language.</li>
+                    <li><strong>Database Settings</strong>: Enter your database host, username, password, and the
+                        desired database name.</li>
+                    <li><strong>Admin Settings</strong>: Create an administrator account (username and password).</li>
+                    <li><strong>License</strong>: Read and agree to the license terms.</li>
+                </ul>
+
+                <h3>5. Complete</h3>
+                <p>Click the "Install" button. Once installation is successful, you will be redirected to the login
+                    page.</p>
+            </div>
+
+            <div id="usage" class="doc-section">
+                <h2>Usage Guide</h2>
+
+                <h3>Login</h3>
+                <ul>
+                    <li>Access the login page (<code>login.php</code>) and enter the administrator credentials you
+                        created during installation.</li>
+                    <li>Standard users can register via <code>register.php</code>.</li>
+                </ul>
+
+                <h3>Dashboard / Board List</h3>
+                <ul>
+                    <li>After logging in, you will see the main board list.</li>
+                    <li>The default installation creates a "Free Board" (자유게시판).</li>
+                </ul>
+
+                <h3>Writing Posts</h3>
+                <ul>
+                    <li>Click on a board to view posts.</li>
+                    <li>Click the "Write" button to create a new post.</li>
+                    <li>You can edit or delete your own posts. Administrators can manage all posts.</li>
+                </ul>
+
+                <h3>Administration</h3>
+                <ul>
+                    <li>The admin user has full control over the board.</li>
+                </ul>
+            </div>
+
+            <div id="license" class="doc-section">
+                <h2>License</h2>
+                <p style="line-height: 1.6; color: #444;">
+                    MicroBoard is open-source software licensed under the <a
+                        href="https://github.com/yourusername/microboard/blob/main/LICENSE" target="_blank"
+                        style="color: #007cba; text-decoration: none;">MIT License</a>.
+                </p>
+                <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                    &copy; 2025 MicroBoard Team. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>MicroBoard</h3>
+                    <p>Board System</p>
+                    <p><a href="#about" style="color: #ccc; text-decoration: none; font-size: 0.9em;">About
+                            MicroBoard</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/yourusername/microboard">GitHub Repository</a></li>
+                        <li><a href="https://github.com/yourusername/microboard/issues">Issues</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="copyright">
+                    &copy; 2025 MicroBoard. Version 1.0.0.
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

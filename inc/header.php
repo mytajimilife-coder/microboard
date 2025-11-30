@@ -21,12 +21,16 @@ $page_title = $page_title ?? 'MicroBoard';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($page_title); ?> - MicroBoard</title>
     <link rel="stylesheet" href="../skin/inc/header.css">
+    <link rel="icon" href="../img/favicon.svg" type="image/svg+xml">
 </head>
 <body>
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <a href="../index.php">MicroBoard</a>
+                <a href="../index.php" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: white;">
+                    <img src="../img/logo.svg" alt="MicroBoard Logo" style="height: 32px; width: 32px;">
+                    MicroBoard
+                </a>
             </div>
             
             <nav class="main-nav">
