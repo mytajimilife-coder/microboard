@@ -5,7 +5,7 @@ Welcome to the official documentation for MicroBoard!
 ## 🌐 Live Documentation
 
 Visit our GitHub Pages site for complete documentation:
-**[https://yourusername.github.io/microboard/](https://yourusername.github.io/microboard/)**
+**[https://mytajimilife-coder.github.io/microboard/](https://mytajimilife-coder.github.io/microboard/)**
 
 ## 📚 What's Included
 
@@ -17,7 +17,7 @@ Visit our GitHub Pages site for complete documentation:
 
 ## 🚀 Quick Links
 
-- [Main Repository](https://github.com/yourusername/microboard)
+- [Main Repository](https://github.com/mytajimilife-coder/microboard)
 - [OAuth Setup Guide](../OAUTH_SETUP.md)
 - [Security Guide](../SECURITY.md)
 - [License](../LICENSE)

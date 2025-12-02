@@ -51,7 +51,7 @@ See [OAUTH_SETUP.md](OAUTH_SETUP.md) for detailed setup instructions.
 
 1. Download or clone the repository
 ```bash
-git clone https://github.com/yourusername/microboard.git
+git clone https://github.com/mytajimilife-coder/microboard.git
 ```
 
 2. Upload files to your web server
@@ -155,7 +155,7 @@ MicroBoard includes built-in security features:
 
 - [OAuth Setup Guide](OAUTH_SETUP.md) - Detailed OAuth configuration
 - [Security Guide](SECURITY.md) - Security best practices
-- [GitHub Pages](https://yourusername.github.io/microboard/) - Online documentation
+- [GitHub Pages](https://mytajimilife-coder.github.io/microboard/) - Online documentation
 
 ## 🤝 Contributing
 
@@ -172,11 +172,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Support
 
-- Create an [Issue](https://github.com/yourusername/microboard/issues)
-- Check the [Documentation](https://yourusername.github.io/microboard/)
+- Create an [Issue](https://github.com/mytajimilife-coder/microboard/issues)
+- Check the [Documentation](https://mytajimilife-coder.github.io/microboard/)
 
 ---
 
 Made with ❤️ by MicroBoard Team
 
-**Version 1.0.0** | [Documentation](https://yourusername.github.io/microboard/) | [Report Bug](https://github.com/yourusername/microboard/issues)
+**Version 1.0.0** | [Documentation](https://mytajimilife-coder.github.io/microboard/) | [Report Bug](https://github.com/mytajimilife-coder/microboard/issues)
