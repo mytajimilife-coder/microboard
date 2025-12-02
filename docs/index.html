@@ -1,203 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About MicroBoard - MicroBoard</title>
+    <title>MicroBoard - A Journey Through Digital Space</title>
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/content.css">
     <link rel="stylesheet" href="css/footer.css">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background: #f8f9fa;
-            color: #333;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e27;
+            color: #e0e6ed;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 우주 배경 애니메이션 */
+        .space-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 50%, #0f1429 100%);
+            z-index: -1;
+        }
+
+        /* 별들 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* 떠다니는 입자들 */
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(147, 197, 253, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+
+            25% {
+                transform: translateY(-100px) translateX(50px);
+            }
+
+            50% {
+                transform: translateY(-50px) translateX(-50px);
+            }
+
+            75% {
+                transform: translateY(-150px) translateX(30px);
+            }
+        }
+
+        /* 헤더 스타일 */
+        .cosmic-header {
+            background: rgba(15, 20, 41, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(147, 197, 253, 0.2);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo a {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            color: #93c5fd;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(147, 197, 253, 0.8);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        /* 메인 컨텐츠 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+            padding: 60px 20px;
+        }
+
+        .content-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 히어로 섹션 */
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 60px;
+        }
+
+        .hero-title {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.5));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 40px rgba(118, 75, 162, 0.8));
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5em;
+            color: #93c5fd;
+            margin-bottom: 10px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: #93c5fd;
+            font-size: 0.9em;
+        }
+
+        /* 카드 스타일 */
+        .cosmic-card {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(147, 197, 253, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        }
+
+        .cosmic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(102, 126, 234, 0.3);
+            border-color: rgba(147, 197, 253, 0.5);
+        }
+
+        .card-title {
+            font-size: 2em;
+            color: #93c5fd;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            padding-bottom: 15px;
+        }
+
+        /* 기능 리스트 */
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-item {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(147, 197, 253, 0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            padding-left: 10px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        .feature-item strong {
+            color: #93c5fd;
+        }
+
+        /* OAuth 카드 */
+        .oauth-cards {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .oauth-card {
+            flex: 1;
+            min-width: 200px;
+            padding: 25px;
+            background: rgba(26, 31, 58, 0.8);
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .oauth-card.google {
+            border-color: rgba(66, 133, 244, 0.5);
+        }
+
+        .oauth-card.line {
+            border-color: rgba(0, 185, 0, 0.5);
+        }
+
+        .oauth-card.apple {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .oauth-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .oauth-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        /* 설치 단계 */
+        .install-steps {
+            counter-reset: step;
+        }
+
+        .install-step {
+            position: relative;
+            padding-left: 60px;
+            margin-bottom: 25px;
+        }
+
+        .install-step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+
+        /* 코드 블록 */
+        code {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 3px 8px;
+            border-radius: 5px;
+            color: #f093fb;
+            border: 1px solid rgba(240, 147, 251, 0.3);
+        }
+
+        /* 푸터 */
+        .cosmic-footer {
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(147, 197, 253, 0.2);
+            padding: 40px 20px;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            color: #93c5fd;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5em;
+            }
+
+            .oauth-cards {
+                flex-direction: column;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
-    <header class="header">
+    <!-- 우주 배경 -->
+    <div class="space-background"></div>
+    <div class="stars" id="stars"></div>
+
+    <!-- 헤더 -->
+    <header class="cosmic-header">
         <div class="header-container">
             <div class="logo">
-                <a href="https://github.com/yourusername/microboard">MicroBoard</a>
+                <a href="https://github.com/yourusername/microboard">✨ MicroBoard</a>
             </div>
-            
+
             <nav class="main-nav">
                 <ul class="nav-menu">
-                    <li><a href="https://github.com/yourusername/microboard" target="_blank">GitHub Repository</a></li>
+                    <li><a href="https://github.com/yourusername/microboard" target="_blank">🚀 GitHub</a></li>
+                    <li><a href="#features">⭐ Features</a></li>
+                    <li><a href="#quickstart">📖 Docs</a></li>
                 </ul>
             </nav>
-            
+
             <div class="user-info">
-                <a href="https://github.com/yourusername/microboard/archive/refs/heads/main.zip" class="btn">Download</a>
+                <a href="https://github.com/yourusername/microboard/archive/refs/heads/main.zip" class="btn">⬇️
+                    Download</a>
             </div>
         </div>
     </header>
 
+    <!-- 메인 컨텐츠 -->
     <main class="main-content">
-        <div class="content-wrapper" style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
-            <div style="text-align: center; margin-bottom: 40px;">
-                <h1 style="font-size: 2.5em; color: #333; margin-bottom: 10px;">MicroBoard</h1>
-                <p style="font-size: 1.2em; color: #666;">Version 1.0.0</p>
+        <div class="content-wrapper">
+            <!-- 히어로 섹션 -->
+            <div class="hero-section">
+                <h1 class="hero-title">MicroBoard</h1>
+                <p class="hero-subtitle">A Journey Through Digital Space</p>
+                <span class="version-badge">🌟 Version 1.0.0</span>
             </div>
 
-            <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
-                <h2 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; color: #007cba;">
-                    About MicroBoard
-                </h2>
-                <p style="line-height: 1.6; color: #444;">
-                    MicroBoard is a lightweight, high-performance bulletin board system designed for simplicity and ease of use. 
-                    Built with modern PHP standards, it offers a robust platform for community engagement without the bloat of larger CMS platforms.
+            <!-- About -->
+            <div class="cosmic-card">
+                <h2 class="card-title">🌌 About MicroBoard</h2>
+                <p style="line-height: 1.8; color: #cbd5e1; margin-bottom: 20px;">
+                    MicroBoard is a lightweight, high-performance bulletin board system designed for simplicity and ease
+                    of use.
+                    Built with modern PHP standards, it offers a robust platform for community engagement without the
+                    bloat of larger CMS platforms.
                 </p>
-                
-                <h3 style="margin-top: 30px; color: #333;">Key Features</h3>
-                <ul style="list-style-type: none; padding: 0;">
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>🚀 Lightweight & Fast:</strong> Optimized for performance with minimal dependencies.
+                <p style="line-height: 1.8; color: #cbd5e1;">
+                    Embark on a journey through digital space with powerful features, seamless OAuth integration,
+                    and multi-language support that transcends boundaries.
+                </p>
+            </div>
+
+            <!-- Features -->
+            <div class="cosmic-card" id="features">
+                <h2 class="card-title">✨ Key Features</h2>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <strong>🚀 Lightweight & Fast:</strong> Optimized for performance with minimal dependencies
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>🌍 Multi-language Support:</strong> Native support for Korean, English, Japanese, and Chinese.
+                    <li class="feature-item">
+                        <strong>🌍 Multi-language Support:</strong> Korean, English, Japanese, and Chinese
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>🔐 OAuth Social Login:</strong> Support for Google, LINE, and Apple login integration.
+                    <li class="feature-item">
+                        <strong>🔐 OAuth Social Login:</strong> Google, LINE, and Apple integration
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>🔒 Secure:</strong> Built-in protection against common web vulnerabilities (CSRF, SQL Injection, XSS).
+                    <li class="feature-item">
+                        <strong>🔒 Secure:</strong> Built-in CSRF, SQL Injection, and XSS protection
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>📱 Responsive Design:</strong> Works perfectly on desktop, tablet, and mobile devices.
+                    <li class="feature-item">
+                        <strong>📱 Responsive Design:</strong> Works on desktop, tablet, and mobile
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>⭐ Point System:</strong> Reward users with points for posting and engagement.
+                    <li class="feature-item">
+                        <strong>⭐ Point System:</strong> Reward users for posting and engagement
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>🎨 Multiple Skins:</strong> Choose from different board layouts and themes.
+                    <li class="feature-item">
+                        <strong>🎨 Multiple Skins:</strong> Choose from different board layouts
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>📝 Rich Text Editor:</strong> Summernote WYSIWYG editor with image upload support.
+                    <li class="feature-item">
+                        <strong>📝 Rich Text Editor:</strong> Summernote WYSIWYG with image upload
                     </li>
-                    <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                        <strong>👥 User Management:</strong> Complete admin panel for managing users and boards.
+                    <li class="feature-item">
+                        <strong>👥 User Management:</strong> Complete admin panel
                     </li>
                 </ul>
-                
-                <h3 style="margin-top: 30px; color: #333;">OAuth Social Login</h3>
-                <p style="line-height: 1.6; color: #444;">
-                    MicroBoard supports seamless integration with popular OAuth providers:
+            </div>
+
+            <!-- OAuth -->
+            <div class="cosmic-card">
+                <h2 class="card-title">🔐 OAuth Social Login</h2>
+                <p style="line-height: 1.8; color: #cbd5e1; margin-bottom: 30px;">
+                    Connect with the cosmos through seamless OAuth integration:
                 </p>
-                <div style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 200px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #4285f4;">
-                        <strong style="color: #4285f4;">🔵 Google</strong>
-                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Login with Google Account</p>
+                <div class="oauth-cards">
+                    <div class="oauth-card google">
+                        <div class="oauth-icon">🔵</div>
+                        <strong style="color: #4285f4; font-size: 1.2em;">Google</strong>
+                        <p style="margin-top: 10px; color: #94a3b8;">Login with Google Account</p>
                     </div>
-                    <div style="flex: 1; min-width: 200px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #00B900;">
-                        <strong style="color: #00B900;">🟢 LINE</strong>
-                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Login with LINE Account</p>
+                    <div class="oauth-card line">
+                        <div class="oauth-icon">🟢</div>
+                        <strong style="color: #00B900; font-size: 1.2em;">LINE</strong>
+                        <p style="margin-top: 10px; color: #94a3b8;">Login with LINE Account</p>
                     </div>
-                    <div style="flex: 1; min-width: 200px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #000;">
-                        <strong style="color: #000;">⚫ Apple</strong>
-                        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">Sign in with Apple</p>
+                    <div class="oauth-card apple">
+                        <div class="oauth-icon">⚫</div>
+                        <strong style="color: #fff; font-size: 1.2em;">Apple</strong>
+                        <p style="margin-top: 10px; color: #94a3b8;">Sign in with Apple</p>
                     </div>
                 </div>
-                <p style="line-height: 1.6; color: #444; font-size: 0.9em;">
-                    <strong>Easy Setup:</strong> Configure OAuth providers directly from the admin panel. 
+                <p
+                    style="line-height: 1.8; color: #cbd5e1; background: rgba(102, 126, 234, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid #667eea;">
+                    <strong>✨ Easy Setup:</strong> Configure OAuth providers directly from the admin panel.
                     Social login buttons automatically appear when configured and enabled.
                 </p>
             </div>
 
-            <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
-                <h2 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; color: #007cba;">
-                    Quick Start
-                </h2>
-                
-                <h3 style="color: #333;">Installation</h3>
-                <ol style="line-height: 1.8; color: #444;">
-                    <li>Download or clone the repository</li>
-                    <li>Upload files to your web server</li>
-                    <li>Navigate to <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">http://your-domain.com/install.php</code></li>
-                    <li>Follow the installation wizard</li>
-                    <li>Configure database settings and admin account</li>
-                    <li>Complete installation and start using MicroBoard!</li>
-                </ol>
-                
-                <h3 style="margin-top: 25px; color: #333;">Requirements</h3>
-                <ul style="line-height: 1.8; color: #444;">
+            <!-- Quick Start -->
+            <div class="cosmic-card" id="quickstart">
+                <h2 class="card-title">🚀 Quick Start</h2>
+
+                <h3 style="color: #93c5fd; margin: 30px 0 20px 0;">Installation</h3>
+                <div class="install-steps">
+                    <div class="install-step">
+                        <p style="color: #cbd5e1;">Download or clone the repository</p>
+                    </div>
+                    <div class="install-step">
+                        <p style="color: #cbd5e1;">Upload files to your web server</p>
+                    </div>
+                    <div class="install-step">
+                        <p style="color: #cbd5e1;">Navigate to <code>http://your-domain.com/install.php</code></p>
+                    </div>
+                    <div class="install-step">
+                        <p style="color: #cbd5e1;">Follow the installation wizard</p>
+                    </div>
+                    <div class="install-step">
+                        <p style="color: #cbd5e1;">Configure database and admin account</p>
+                    </div>
+                    <div class="install-step">
+                        <p style="color: #cbd5e1;">Start your journey! 🎉</p>
+                    </div>
+                </div>
+
+                <h3 style="color: #93c5fd; margin: 30px 0 20px 0;">Requirements</h3>
+                <ul style="line-height: 1.8; color: #cbd5e1; list-style-position: inside;">
                     <li>PHP 7.4 or higher</li>
-                    <li>MySQL 5.7 or higher / MariaDB 10.2 or higher</li>
+                    <li>MySQL 5.7+ / MariaDB 10.2+</li>
                     <li>Apache or Nginx web server</li>
                     <li>PDO PHP Extension</li>
                     <li>cURL PHP Extension (for OAuth)</li>
                 </ul>
-                
-                <h3 style="margin-top: 25px; color: #333;">OAuth Configuration</h3>
-                <p style="line-height: 1.6; color: #444;">
-                    After installation, configure OAuth providers in the admin panel:
-                </p>
-                <ol style="line-height: 1.8; color: #444;">
-                    <li>Login as admin</li>
-                    <li>Go to Admin Panel → OAuth Settings</li>
-                    <li>Enter Client ID and Client Secret for each provider</li>
-                    <li>Enable the providers you want to use</li>
-                    <li>Social login buttons will automatically appear on login/register pages</li>
-                </ol>
-                <p style="line-height: 1.6; color: #444; background: #fff3cd; padding: 10px; border-radius: 4px; border-left: 4px solid #ffc107;">
-                    <strong>📖 Documentation:</strong> See <code>OAUTH_SETUP.md</code> for detailed OAuth setup instructions.
-                </p>
             </div>
 
-            <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
-                <h2 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; color: #007cba;">
-                    Admin Features
-                </h2>
-                <ul style="line-height: 1.8; color: #444;">
-                    <li><strong>User Management:</strong> View, manage, and delete users</li>
-                    <li><strong>Board Management:</strong> Create and configure multiple boards</li>
-                    <li><strong>OAuth Settings:</strong> Configure Google, LINE, and Apple login</li>
-                    <li><strong>Point System:</strong> Enable/disable points and set rewards</li>
-                    <li><strong>Multi-language:</strong> Switch between 4 supported languages</li>
+            <!-- Admin Features -->
+            <div class="cosmic-card">
+                <h2 class="card-title">👨‍💼 Admin Features</h2>
+                <ul class="feature-list">
+                    <li class="feature-item">
+                        <strong>👥 User Management:</strong> View, manage, and delete users
+                    </li>
+                    <li class="feature-item">
+                        <strong>📋 Board Management:</strong> Create and configure multiple boards
+                    </li>
+                    <li class="feature-item">
+                        <strong>🔐 OAuth Settings:</strong> Configure Google, LINE, and Apple login
+                    </li>
+                    <li class="feature-item">
+                        <strong>⭐ Point System:</strong> Enable/disable points and set rewards
+                    </li>
+                    <li class="feature-item">
+                        <strong>🌍 Multi-language:</strong> Switch between 4 supported languages
+                    </li>
                 </ul>
             </div>
 
-            <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                <h2 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; color: #007cba;">
-                    License
-                </h2>
-                <p style="line-height: 1.6; color: #444;">
-                    MicroBoard is open-source software licensed under the <a href="https://github.com/yourusername/microboard/blob/main/LICENSE" target="_blank" style="color: #007cba; text-decoration: none;">MIT License</a>.
+            <!-- License -->
+            <div class="cosmic-card">
+                <h2 class="card-title">📜 License</h2>
+                <p style="line-height: 1.8; color: #cbd5e1;">
+                    MicroBoard is open-source software licensed under the
+                    <a href="https://github.com/yourusername/microboard/blob/main/LICENSE" target="_blank"
+                        style="color: #93c5fd; text-decoration: none; border-bottom: 1px solid #93c5fd;">MIT
+                        License</a>.
                 </p>
-                <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                <p style="margin-top: 20px; color: #94a3b8;">
                     &copy; 2025 MicroBoard Team. All rights reserved.
                 </p>
             </div>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>MicroBoard</h3>
-                    <p>Board System</p>
-                    <p><a href="#" style="color: #ccc; text-decoration: none; font-size: 0.9em;">About MicroBoard</a></p>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Links</h4>
-                    <ul>
-                        <li><a href="https://github.com/yourusername/microboard">GitHub Repository</a></li>
-                        <li><a href="https://github.com/yourusername/microboard/issues">Issues</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <div class="copyright">
-                    &copy; 2025 MicroBoard. Version 1.0.0.
-                </div>
-            </div>
+    <!-- 푸터 -->
+    <footer class="cosmic-footer">
+        <div class="footer-content">
+            <p style="font-size: 1.2em; margin-bottom: 10px;">✨ MicroBoard ✨</p>
+            <p style="margin-bottom: 20px;">A Journey Through Digital Space</p>
+            <p style="font-size: 0.9em; color: #64748b;">
+                Made with ❤️ by MicroBoard Team | Version 1.0.0
+            </p>
         </div>
     </footer>
+
+    <script>
+        // 별 생성
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 떠다니는 입자 생성
+        function createParticles() {
+            const particleCount = 20;
+            const body = document.body;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 100 + 50 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                body.appendChild(particle);
+            }
+        }
+
+        // 페이지 로드 시 실행
+        window.addEventListener('load', () => {
+            createStars();
+            createParticles();
+        });
+
+        // 스무스 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>
