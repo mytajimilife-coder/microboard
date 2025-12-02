@@ -16,39 +16,38 @@ require_once 'inc/header.php';
 
     <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
         <h2 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; color: #007cba;">
-            <?php echo $lang['about_title'] ?? 'About MicroBoard'; ?>
+            <?php echo $lang['about_title']; ?>
         </h2>
         <p style="line-height: 1.6; color: #444;">
-            MicroBoard is a lightweight, high-performance bulletin board system designed for simplicity and ease of use. 
-            Built with modern PHP standards, it offers a robust platform for community engagement without the bloat of larger CMS platforms.
+            <?php echo $lang['about_description']; ?>
         </p>
         
-        <h3 style="margin-top: 30px; color: #333;">Key Features</h3>
+        <h3 style="margin-top: 30px; color: #333;"><?php echo $lang['key_features']; ?></h3>
         <ul style="list-style-type: none; padding: 0;">
             <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                <strong>🚀 Lightweight & Fast:</strong> Optimized for performance with minimal dependencies.
+                <strong>🚀 <?php echo $lang['feature_lightweight']; ?>:</strong> <?php echo $lang['feature_lightweight_desc']; ?>
             </li>
             <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                <strong>🌍 Multi-language Support:</strong> Native support for Korean, English, Japanese, and Chinese.
+                <strong>🌍 <?php echo $lang['feature_multilang']; ?>:</strong> <?php echo $lang['feature_multilang_desc']; ?>
             </li>
             <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                <strong>🔒 Secure:</strong> Built-in protection against common web vulnerabilities.
+                <strong>🔒 <?php echo $lang['feature_secure']; ?>:</strong> <?php echo $lang['feature_secure_desc']; ?>
             </li>
             <li style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                <strong>📱 Responsive Design:</strong> Works perfectly on desktop, tablet, and mobile devices.
+                <strong>📱 <?php echo $lang['feature_responsive']; ?>:</strong> <?php echo $lang['feature_responsive_desc']; ?>
             </li>
         </ul>
     </div>
 
     <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
         <h2 style="border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 20px; color: #007cba;">
-            License
+            <?php echo $lang['license_title']; ?>
         </h2>
         <p style="line-height: 1.6; color: #444;">
-            MicroBoard is open-source software licensed under the <a href="LICENSE" target="_blank" style="color: #007cba; text-decoration: none;">MIT License</a>.
+            <?php echo $lang['license_description']; ?>
         </p>
         <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
-            &copy; <?php echo date('Y'); ?> MicroBoard Team. All rights reserved.
+            &copy; <?php echo date('Y'); ?> MicroBoard Team. <?php echo $lang['all_rights_reserved']; ?>
         </p>
     </div>
 </div>

@@ -9,15 +9,15 @@ require_once 'inc/header.php';
 
 <div class="landing-hero">
     <div class="hero-content">
-        <h1>Welcome to MicroBoard</h1>
-        <p>A simple, clean, and efficient bulletin board system for your community.</p>
+        <h1><?php echo $lang['welcome_to_microboard']; ?></h1>
+        <p><?php echo $lang['landing_description']; ?></p>
         
         <div class="hero-actions">
             <?php if (isLoggedIn()): ?>
-                <a href="list.php" class="btn btn-large">Go to Board</a>
+                <a href="list.php" class="btn btn-large"><?php echo $lang['go_to_board']; ?></a>
             <?php else: ?>
-                <a href="login.php" class="btn btn-large">Login</a>
-                <a href="register.php" class="btn btn-large btn-outline">Register</a>
+                <a href="login.php" class="btn btn-large"><?php echo $lang['login']; ?></a>
+                <a href="register.php" class="btn btn-large btn-outline"><?php echo $lang['register']; ?></a>
             <?php endif; ?>
         </div>
     </div>

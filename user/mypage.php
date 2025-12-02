@@ -186,7 +186,7 @@ $paginated_comments = array_slice($user_comments, $comment_offset, $comments_per
 <body>
   <div class="mypage-container">
     <div class="user-info">
-      <h2><?php echo htmlspecialchars($username); ?>님의 <?php echo $lang['mypage']; ?></h2>
+      <h2><?php echo htmlspecialchars($username); ?><?php echo $lang['user_suffix']; ?> <?php echo $lang['mypage']; ?></h2>
       <div class="user-stats">
         <div class="stat-item">
           <div class="stat-number"><?php echo $total_posts; ?></div>
@@ -262,15 +262,15 @@ $paginated_comments = array_slice($user_comments, $comment_offset, $comments_per
             <?php foreach ($paginated_comments as $comment): ?>
               <li class="comment-item">
                 <div class="post-meta">
-                  <span>게시물: <a href="../view.php?id=<?php echo $comment['post_id']; ?>"><?php echo htmlspecialchars($comment['post_title']); ?></a></span>
-                  <span style="margin-left: 20px;">작성일: <?php echo htmlspecialchars($comment['created_at']); ?></span>
+                  <span><?php echo $lang['board']; ?>: <a href="../view.php?id=<?php echo $comment['post_id']; ?>"><?php echo htmlspecialchars($comment['post_title']); ?></a></span>
+                  <span style="margin-left: 20px;"><?php echo $lang['post_date']; ?>: <?php echo htmlspecialchars($comment['created_at']); ?></span>
                 </div>
                 <div class="post-content">
                   <?php echo htmlspecialchars(mb_substr($comment['content'], 0, 100)); ?>
                   <?php echo mb_strlen($comment['content']) > 100 ? '...' : ''; ?>
                 </div>
                 <div class="post-actions">
-                  <a href="../view.php?id=<?php echo $comment['post_id']; ?>" class="btn">게시물 보기</a>
+                  <a href="../view.php?id=<?php echo $comment['post_id']; ?>" class="btn"><?php echo $lang['view_post']; ?></a>
                 </div>
               </li>
             <?php endforeach; ?>

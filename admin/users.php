@@ -14,7 +14,7 @@ $success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_user') {
   // CSRF 토큰 검증
   if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-    $error = 'CSRF 토큰이 유효하지 않습니다.';
+    $error = $lang['csrf_token_invalid'];
   } else {
     $username = trim($_POST['username'] ?? '');
     

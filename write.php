@@ -29,7 +29,7 @@ if ($_POST) {
         insert_point(
           $_SESSION['user'], 
           $config['cf_write_point'], 
-          '글작성', 
+          $lang['post_write_action'], 
           'mb1_board', 
           $wr_id, 
           'write'
