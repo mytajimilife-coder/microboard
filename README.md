@@ -2,8 +2,6 @@
 
 MicroBoard is a lightweight, easy-to-install bulletin board system (BBS) built with PHP and MySQL. It supports multiple languages (Korean, English, Japanese, Chinese) and provides essential features for community engagement.
 
-> **Documentation**: [View Full Documentation](https://yourusername.github.io/microboard/) (requires GitHub Pages enabled) or open `docs/index.html` locally.
-
 ## Requirements
 
 *   **PHP**: 7.4 or higher
