@@ -2,7 +2,7 @@
 require_once 'config.php';
 
 // 페이지 제목 설정
-$page_title = 'About MicroBoard';
+$page_title = 'About MaicroBoard';
 
 // 헤더 포함
 require_once 'inc/header.php';
@@ -10,8 +10,8 @@ require_once 'inc/header.php';
 
 <div class="content-wrapper" style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
     <div style="text-align: center; margin-bottom: 40px;">
-        <h1 style="font-size: 2.5em; color: #333; margin-bottom: 10px;">MicroBoard</h1>
-        <p style="font-size: 1.2em; color: #666;">Version <?php echo defined('MICROBOARD_VERSION') ? MICROBOARD_VERSION : '1.0.0'; ?></p>
+        <h1 style="font-size: 2.5em; color: #333; margin-bottom: 10px;">MaicroBoard</h1>
+        <p style="font-size: 1.2em; color: #666;">Version <?php echo defined('MAICROBOARD_VERSION') ? MAICROBOARD_VERSION : '1.0.0'; ?></p>
     </div>
 
     <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 30px;">
@@ -47,7 +47,7 @@ require_once 'inc/header.php';
             <?php echo $lang['license_description']; ?>
         </p>
         <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
-            &copy; <?php echo date('Y'); ?> MicroBoard Team. <?php echo $lang['all_rights_reserved']; ?>
+            &copy; <?php echo date('Y'); ?> MaicroBoard Team. <?php echo $lang['all_rights_reserved']; ?>
         </p>
     </div>
 </div>
