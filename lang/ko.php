@@ -205,5 +205,17 @@ return [
     'level_update_failed' => '회원등급 변경에 실패했습니다.',
     'change_level' => '등급 변경',
     'withdrawn' => '탈퇴',
+    
+    // 정책 페이지 관련
+    'terms_of_service' => '이용약관',
+    'privacy_policy' => '개인정보 보호정책',
+    'policy_management' => '정책 관리',
+    'policy_title' => '제목',
+    'policy_content' => '내용',
+    'policy_updated' => '정책이 업데이트되었습니다.',
+    'policy_update_failed' => '정책 업데이트에 실패했습니다.',
+    'edit_terms' => '이용약관 편집',
+    'edit_privacy' => '개인정보 보호정책 편집',
+    'last_updated' => '최종 업데이트',
 ];
 ?>

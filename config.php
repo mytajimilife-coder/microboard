@@ -598,6 +598,39 @@ function verifyUserWithBlock($id, $pass) {
     return ['success' => true];
 }
 
+// 정책 페이지 관련 함수
+function getPolicy($policy_type) {
+    $db = getDB();
+    try {
+        $stmt = $db->prepare("SELECT * FROM mb1_policy WHERE policy_type = ?");
+        $stmt->execute([$policy_type]);
+        return $stmt->fetch();
+    } catch (Exception $e) {
+        return null;
+    }
+}
+
+function updatePolicy($policy_type, $title, $content) {
+    $db = getDB();
+    try {
+        // 정책이 존재하는지 확인
+        $stmt = $db->prepare("SELECT COUNT(*) FROM mb1_policy WHERE policy_type = ?");
+        $stmt->execute([$policy_type]);
+        
+        if ($stmt->fetchColumn() > 0) {
+            // 업데이트
+            $stmt = $db->prepare("UPDATE mb1_policy SET policy_title = ?, policy_content = ?, updated_at = NOW() WHERE policy_type = ?");
+            return $stmt->execute([$title, $content, $policy_type]);
+        } else {
+            // 삽입
+            $stmt = $db->prepare("INSERT INTO mb1_policy (policy_type, policy_title, policy_content) VALUES (?, ?, ?)");
+            return $stmt->execute([$policy_type, $title, $content]);
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
 // 스킨 설정
 define('SKIN_DIR', './skin/default');
 ?>

@@ -205,5 +205,17 @@ return [
     'level_update_failed' => 'Failed to update member level.',
     'change_level' => 'Change Level',
     'withdrawn' => 'Withdrawn',
+    
+    // Policy Pages
+    'terms_of_service' => 'Terms of Service',
+    'privacy_policy' => 'Privacy Policy',
+    'policy_management' => 'Policy Management',
+    'policy_title' => 'Title',
+    'policy_content' => 'Content',
+    'policy_updated' => 'Policy has been updated.',
+    'policy_update_failed' => 'Failed to update policy.',
+    'edit_terms' => 'Edit Terms of Service',
+    'edit_privacy' => 'Edit Privacy Policy',
+    'last_updated' => 'Last Updated',
 ];
 ?>
