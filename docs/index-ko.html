@@ -369,6 +369,174 @@
                 gap: 15px;
             }
         }
+
+        /* 라이트모드 스타일 */
+        body.light-mode {
+            background: #e3f2fd;
+            color: #1a237e;
+        }
+
+        body.light-mode .space-background {
+            background: linear-gradient(to bottom, 
+                #87CEEB 0%,      /* 맑은 하늘색 */
+                #B0E0E6 30%,     /* 연한 하늘색 */
+                #FFE4B5 70%,     /* 황혼 오렌지 */
+                #FFA07A 100%     /* 석양 오렌지 */
+            );
+        }
+
+        /* 라이트모드 구름 */
+        body.light-mode .star {
+            background: white;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.8),
+                0 0 40px rgba(255, 255, 255, 0.6);
+            animation: float-cloud 30s infinite ease-in-out;
+        }
+
+        @keyframes float-cloud {
+            0%, 100% {
+                transform: translateX(0) translateY(0);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateX(100px) translateY(-50px);
+                opacity: 0.9;
+            }
+        }
+
+        body.light-mode .particle {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.6) 0%, transparent 70%);
+        }
+
+        body.light-mode .cosmic-header {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(26, 35, 126, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .logo a {
+            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .nav-menu a {
+            color: #1565c0;
+        }
+
+        body.light-mode .nav-menu a:hover {
+            color: #0d47a1;
+            text-shadow: 0 0 10px rgba(21, 101, 192, 0.3);
+        }
+
+        body.light-mode .btn {
+            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        body.light-mode .btn:hover {
+            box-shadow: 0 6px 25px rgba(25, 118, 210, 0.5);
+        }
+
+        body.light-mode .hero-title {
+            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 50%, #1565c0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        body.light-mode .hero-subtitle {
+            color: #1565c0;
+        }
+
+        body.light-mode .version-badge {
+            background: rgba(25, 118, 210, 0.1);
+            border: 1px solid rgba(25, 118, 210, 0.3);
+            color: #1565c0;
+        }
+
+        body.light-mode .cosmic-card {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(25, 118, 210, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .cosmic-card:hover {
+            box-shadow: 0 12px 48px rgba(25, 118, 210, 0.2);
+            border-color: rgba(25, 118, 210, 0.4);
+        }
+
+        body.light-mode .card-title {
+            color: #1565c0;
+            border-bottom: 2px solid rgba(25, 118, 210, 0.3);
+        }
+
+        body.light-mode .feature-item {
+            border-bottom: 1px solid rgba(25, 118, 210, 0.1);
+        }
+
+        body.light-mode .feature-item:hover {
+            background: rgba(25, 118, 210, 0.05);
+        }
+
+        body.light-mode .feature-item strong {
+            color: #1565c0;
+        }
+
+        body.light-mode .oauth-card {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        body.light-mode code {
+            background: rgba(25, 118, 210, 0.1);
+            color: #0d47a1;
+            border: 1px solid rgba(25, 118, 210, 0.3);
+        }
+
+        body.light-mode .cosmic-footer {
+            background: rgba(255, 255, 255, 0.9);
+            border-top: 1px solid rgba(25, 118, 210, 0.2);
+        }
+
+        body.light-mode .footer-content {
+            color: #1565c0;
+        }
+
+        /* 다크모드 토글 버튼 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.7);
+        }
+
+        body.light-mode .theme-toggle {
+            background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
+            box-shadow: 0 4px 20px rgba(25, 118, 210, 0.5);
+        }
+
+        body.light-mode .theme-toggle:hover {
+            box-shadow: 0 6px 30px rgba(25, 118, 210, 0.7);
+        }
+
     </style>
 </head>
 
@@ -505,7 +673,7 @@
                         <p style="color: #cbd5e1;">웹 서버에 파일 업로드</p>
                     </div>
                     <div class="install-step">
-                        <p style="color: #cbd5e1;">Navigate to <code>http://your-domain.com/install.php</code></p>
+                        <p style="color: #cbd5e1;"><code>http://your-domain.com/install.php</code>로 이동</p>
                     </div>
                     <div class="install-step">
                         <p style="color: #cbd5e1;">설치 마법사 따라하기</p>
@@ -578,6 +746,35 @@
     </footer>
 
     <script>
+
+        // 테마 토글 기능
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+
+        // 저장된 테마 불러오기
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            themeIcon.textContent = '🌙';
+        } else {
+            themeIcon.textContent = '☀️';
+        }
+
+        // 테마 토글 이벤트
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+
         // 별 생성
         function createStars() {
             const starsContainer = document.getElementById('stars');
