@@ -8,15 +8,36 @@ A lightweight, high-performance bulletin board system designed for simplicity an
 
 ## ✨ Features
 
+### Core Features
 - 🚀 **Lightweight & Fast** - Optimized for performance with minimal dependencies
-- 🌍 **Multi-language Support** - Korean, English, Japanese, and Chinese
-- 🔐 **OAuth Social Login** - Google, LINE, and Apple integration
+- 🌍 **Multi-language Support** - Korean, English, Japanese, and Chinese (auto-detection)
+- 📱 **Responsive Design** - Works perfectly on desktop, tablet, and mobile
 - 🔒 **Secure** - Built-in CSRF, SQL Injection, and XSS protection
-- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
-- ⭐ **Point System** - Reward users for posting and engagement
-- 🎨 **Multiple Skins** - Choose from different board layouts
 - 📝 **Rich Text Editor** - Summernote WYSIWYG with image upload
-- 👥 **User Management** - Complete admin panel
+
+### Social & Authentication
+- 🔐 **OAuth Social Login** - Google, LINE, and Apple integration
+- 👤 **User Registration** - Simple and secure registration process
+- 🔑 **Session Management** - Auto-logout after 30 minutes of inactivity
+- 🚫 **Member Blocking** - Block problematic users with reason tracking
+
+### Engagement Features
+- ⭐ **Point System** - Reward users for posting and engagement
+- 🏆 **Member Levels** - 10-level member ranking system
+- 💬 **Comment System** - Nested comments with real-time updates
+- 📊 **View Tracking** - Hit counter with duplicate prevention
+
+### Extensibility
+- 🔌 **Plugin System** - Hook-based plugin architecture for unlimited extensions
+- 🎨 **Multiple Skins** - Choose from different board layouts
+- 📄 **Policy Management** - Manage Terms of Service and Privacy Policy
+- 🌐 **SEO Optimized** - Auto-generated sitemaps and meta tags
+
+### Admin Features
+- 👥 **User Management** - Complete admin panel with user controls
+- 📋 **Board Management** - Create and configure multiple boards
+- 🔐 **OAuth Settings** - Configure social login providers
+- ⚙️ **System Configuration** - Customize points, permissions, and more
 
 ## 🔐 OAuth Social Login
 
@@ -106,7 +127,9 @@ microboard/
 ├── admin/              # Admin panel
 │   ├── oauth.php      # OAuth settings
 │   ├── users.php      # User management
-│   └── board.php      # Board management
+│   ├── board.php      # Board management
+│   ├── config.php     # System configuration
+│   └── policy.php     # Policy management
 ├── inc/               # Include files
 │   └── oauth.php      # OAuth helper functions
 ├── lang/              # Language files
@@ -114,11 +137,16 @@ microboard/
 │   ├── en.php         # English
 │   ├── ja.php         # Japanese
 │   └── zh.php         # Chinese
+├── plugin/            # Plugins directory
+│   └── hello_world/   # Example plugin
 ├── skin/              # Board skins
+├── docs/              # GitHub Pages documentation
 ├── install.php        # Installation wizard
 ├── oauth_callback.php # OAuth callback handler
+├── policy.php         # Policy pages (ToS, Privacy)
 └── OAUTH_SETUP.md     # OAuth setup guide
 ```
+
 
 ## 🔧 Configuration
 
@@ -153,6 +181,7 @@ MicroBoard includes built-in security features:
 
 ## 📖 Documentation
 
+- [Features Guide](FEATURES.md) - Complete feature documentation (Korean)
 - [OAuth Setup Guide](OAUTH_SETUP.md) - Detailed OAuth configuration
 - [Security Guide](SECURITY.md) - Security best practices
 - [GitHub Pages](https://mytajimilife-coder.github.io/microboard/) - Online documentation
