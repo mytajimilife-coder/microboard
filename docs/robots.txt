@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mytajimilife-coder.github.io/microboard/sitemap.xml

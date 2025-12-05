@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://mytajimilife-coder.github.io/microboard/</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://mytajimilife-coder.github.io/microboard/index-ko.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mytajimilife-coder.github.io/microboard/index-ja.html"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://mytajimilife-coder.github.io/microboard/index-zh.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
+  </url>
+  <url>
+    <loc>https://mytajimilife-coder.github.io/microboard/index-ko.html</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
+  </url>
+  <url>
+    <loc>https://mytajimilife-coder.github.io/microboard/index-ja.html</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
+  </url>
+  <url>
+    <loc>https://mytajimilife-coder.github.io/microboard/index-zh.html</loc>
+    <lastmod>2025-12-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
+  </url>
+</urlset>
