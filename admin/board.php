@@ -7,6 +7,16 @@ $db = getDB();
 $action = $_GET['action'] ?? '';
 $bo_table = $_GET['bo_table'] ?? '';
 
+// DB 스키마 자동 업데이트: bo_plugins 컬럼 확인 및 추가
+try {
+    $stmt = $db->query("SHOW COLUMNS FROM mb1_board_config LIKE 'bo_plugins'");
+    if ($stmt->rowCount() == 0) {
+        $db->exec("ALTER TABLE mb1_board_config ADD COLUMN bo_plugins TEXT");
+    }
+} catch (Exception $e) {
+    // 오류 무시 (권한 문제 등)
+}
+
 // CSRF 토큰 검증
 if ($_SERVER['REQUEST_METHOD'] === 'POST' || ($action === 'delete' && $bo_table)) {
     if (!isset($_REQUEST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_REQUEST['csrf_token'])) {
