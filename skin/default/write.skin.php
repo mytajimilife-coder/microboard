@@ -1,7 +1,7 @@
 <div class="content-wrapper">
 <div class="write-form">
     <h2><?php echo $page_title; ?></h2>
-    <form action="write.php<?php echo $id ? '?id=' . $id : ''; ?>" method="post" enctype="multipart/form-data">
+    <form action="write.php?bo_table=<?php echo $bo_table; ?><?php echo $id ? '&id=' . $id : ''; ?>" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title"><?php echo $lang['subject']; ?></label>
             <input type="text" id="title" name="title" value="<?php echo $post['wr_subject']; ?>" required>
@@ -19,7 +19,7 @@
 
         <div class="form-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
             <button type="submit" class="btn"><?php echo $lang['save']; ?></button>
-            <a href="list.php" class="btn btn-outline"><?php echo $lang['cancel']; ?></a>
+            <a href="list.php?bo_table=<?php echo $bo_table; ?>" class="btn btn-outline"><?php echo $lang['cancel']; ?></a>
         </div>
     </form>
 </div>

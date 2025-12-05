@@ -13,7 +13,7 @@ $success = '';
 $error = '';
 
 // POST 요청 처리
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['provider'])) {
     // CSRF 토큰 검증
     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
         $error = $lang['csrf_token_invalid'];

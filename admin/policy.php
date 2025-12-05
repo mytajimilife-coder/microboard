@@ -22,7 +22,7 @@ $policy_type = $tab . '_' . $target_lang;
 // 여기서는 편집 시 무조건 언어 코드를 붙여서 저장하도록 함.
 
 // 정책 업데이트 처리
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['title'])) {
   if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
     $error = $lang['csrf_token_invalid'];
   } else {

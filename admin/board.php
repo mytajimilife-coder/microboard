@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' || ($action === 'delete' && $bo_table)
 }
 
 // 게시판 생성/수정
-if ($_POST) {
-  $bo_table = $_POST['bo_table'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['act']) && $_POST['act'] === 'save') {
+  $bo_table = $_POST['bo_table'] ?? '';
   
   // 테이블명 검증 (영문, 숫자, 언더스코어만 허용)
   if (!preg_match('/^[a-zA-Z0-9_]+$/', $bo_table)) {
@@ -280,7 +280,7 @@ if (is_dir($plugin_dir)) {
           <?php foreach ($boards as $b): ?>
           <tr>
             <td style="font-weight: 600; color: var(--primary-color);">
-                <a href="../list.php?table=<?php echo $b['bo_table']; ?>" target="_blank" style="text-decoration: none; color: inherit;">
+                <a href="../list.php?bo_table=<?php echo $b['bo_table']; ?>" target="_blank" style="text-decoration: none; color: inherit;">
                     <?php echo htmlspecialchars($b['bo_table']); ?> ↗️
                 </a>
             </td>
@@ -320,6 +320,7 @@ if (is_dir($plugin_dir)) {
     </h3>
     
     <form method="post">
+      <input type="hidden" name="act" value="save">
       <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
       
       <div class="form-grid">

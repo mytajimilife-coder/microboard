@@ -94,6 +94,7 @@ if (!isset($config['cf_bg_value'])) $config['cf_bg_value'] = '#ffffff';
 <?php endif; ?>
 
 <form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="act" value="save_config">
     
     <!-- 포인트 설정 -->
     <div class="admin-card">
