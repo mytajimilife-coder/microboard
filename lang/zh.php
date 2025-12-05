@@ -1,7 +1,11 @@
 <?php
 return [
     'welcome' => '欢迎',
+    'welcome_to_microboard' => '欢迎来到MicroBoard',
+    'landing_description' => '简单而强大的论坛系统。立即开始！',
+    'go_to_board' => '前往论坛',
     'logout' => '登出',
+    'write' => '写帖',
     'write_post' => '写帖子',
     'board_list' => '版面列表',
     'post_subject' => '主题',
@@ -155,6 +159,8 @@ return [
     'search_term' => '搜索词',
     'search' => '搜索',
     'attachments' => '附件',
+    'file_upload' => '文件上传',
+    'file_upload_help' => '可以上传多个文件',
     'comments' => '评论',
     'feature_secure_desc' => '内置针对常见Web漏洞的保护。',
     'feature_responsive' => '响应式设计',

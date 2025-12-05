@@ -1,19 +1,42 @@
 <?php
+// DB 체크 건너뛰기 플래그 (config.php에서 사용)
+define('SKIP_DB_CHECK', true);
+
 session_start();
 
-// 이미 설치된 경우 리디렉션
+// DB 설정 상수 정의 (config.php 없이도 작동하도록)
+if (!defined('DB_HOST')) {
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_NAME', 'microboard');
+}
+
+// 이미 설치되었는지 확인 (DB 연결 테스트)
+$already_installed = false;
 if (file_exists('config.php')) {
-    require_once 'config.php';
-    if (function_exists('getDB')) {
-        header('Location: index.php');
-        exit;
+    try {
+        $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+        $test_pdo = new PDO($dsn, DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        ]);
+        // 테이블 존재 확인
+        $stmt = $test_pdo->query("SHOW TABLES LIKE 'mb1_member'");
+        if ($stmt->rowCount() > 0) {
+            $already_installed = true;
+            header('Location: index.php');
+            exit;
+        }
+    } catch (Exception $e) {
+        // 연결 실패 시 설치 계속 진행
+        $already_installed = false;
     }
 }
 
 $error = '';
 $success = '';
 
-// 언어 파일 로드
 // 언어 파일 로드
 if (isset($_POST['language'])) {
     $language = $_POST['language'];
@@ -57,8 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $error = $lang['invalid_format'];
         } else {
             try {
-                // 1. 데이터베이스 이름으로 직접 연결 시도 (일반 호스팅 호환성)
-                // Shared hosting often restricts users to specific databases and disallows connecting without a DB name.
+                // 1. 데이터베이스 이름으로 직접 연결 시도
                 $dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";
                 try {
                     $pdo = new PDO($dsn, $db_user, $db_pass, [
@@ -66,8 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
                     ]);
                 } catch (PDOException $e) {
-                    // 2. 연결 실패 시 (DB가 없거나 접근 불가), DB 없이 연결 후 생성 시도
-                    // If the DB doesn't exist or we can't connect to it directly, try connecting to the server root and creating it.
+                    // 2. 연결 실패 시 DB 없이 연결 후 생성 시도
                     $dsn_no_db = "mysql:host={$db_host};charset=utf8mb4";
                     $pdo = new PDO($dsn_no_db, $db_user, $db_pass, [
                         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -98,14 +119,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         `bo_list_count` int(11) NOT NULL DEFAULT 15,
                         `bo_use_comment` tinyint(1) NOT NULL DEFAULT 0,
                         `bo_skin` varchar(50) NOT NULL DEFAULT 'default',
+                        `bo_plugins` text,
                         PRIMARY KEY (`bo_table`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                     
                     CREATE TABLE IF NOT EXISTS `mb1_member` (
                         `mb_id` varchar(50) NOT NULL,
                         `mb_password` varchar(255) NOT NULL,
+                        `mb_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
+                        `mb_point` int(11) NOT NULL DEFAULT 0,
+                        `mb_level` tinyint(4) NOT NULL DEFAULT 1,
+                        `mb_blocked` tinyint(1) NOT NULL DEFAULT 0,
+                        `mb_blocked_reason` varchar(255) DEFAULT NULL,
+                        `mb_leave_date` datetime DEFAULT NULL,
                         `oauth_provider` varchar(50) DEFAULT NULL,
                         PRIMARY KEY (`mb_id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                    
+                    CREATE TABLE IF NOT EXISTS `mb1_board_file` (
+                        `bf_no` int(11) NOT NULL AUTO_INCREMENT,
+                        `wr_id` int(11) NOT NULL,
+                        `bf_source` varchar(255) NOT NULL,
+                        `bf_file` varchar(255) NOT NULL,
+                        `bf_download` int(11) NOT NULL DEFAULT 0,
+                        `bf_content` text,
+                        `bf_filesize` int(11) NOT NULL DEFAULT 0,
+                        `bf_datetime` datetime NOT NULL,
+                        PRIMARY KEY (`bf_no`),
+                        KEY `wr_id` (`wr_id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                    
+                    CREATE TABLE IF NOT EXISTS `mb1_comment` (
+                        `co_id` int(11) NOT NULL AUTO_INCREMENT,
+                        `wr_id` int(11) NOT NULL,
+                        `co_content` text NOT NULL,
+                        `co_name` varchar(50) NOT NULL,
+                        `co_datetime` datetime NOT NULL,
+                        PRIMARY KEY (`co_id`),
+                        KEY `wr_id` (`wr_id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                    
+                    CREATE TABLE IF NOT EXISTS `mb1_config` (
+                        `cf_use_point` tinyint(1) NOT NULL DEFAULT 0,
+                        `cf_write_point` int(11) NOT NULL DEFAULT 0
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                    
+                    CREATE TABLE IF NOT EXISTS `mb1_point` (
+                        `po_id` int(11) NOT NULL AUTO_INCREMENT,
+                        `mb_id` varchar(50) NOT NULL,
+                        `po_datetime` datetime NOT NULL,
+                        `po_content` varchar(255) NOT NULL,
+                        `po_point` int(11) NOT NULL,
+                        `po_rel_table` varchar(50) DEFAULT NULL,
+                        `po_rel_id` int(11) DEFAULT NULL,
+                        `po_rel_action` varchar(50) DEFAULT NULL,
+                        PRIMARY KEY (`po_id`),
+                        KEY `mb_id` (`mb_id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                     
                     CREATE TABLE IF NOT EXISTS `mb1_oauth_config` (
@@ -124,13 +193,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         PRIMARY KEY (`provider`, `provider_user_id`),
                         KEY `mb_id` (`mb_id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                    
+                    CREATE TABLE IF NOT EXISTS `mb1_policy` (
+                        `policy_type` varchar(50) NOT NULL,
+                        `policy_title` varchar(255) NOT NULL,
+                        `policy_content` longtext NOT NULL,
+                        `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                        PRIMARY KEY (`policy_type`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                 ";
                 
                 $pdo->exec($sql);
                 
                 // 기본 관리자 사용자 생성
                 $password_hash = password_hash($admin_password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO mb1_member (mb_id, mb_password) VALUES (?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO mb1_member (mb_id, mb_password, mb_level) VALUES (?, ?, 10)");
                 $stmt->execute([$admin_username, $password_hash]);
                 
                 // 기본 게시판 생성
@@ -144,291 +221,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     $stmt->execute([$provider]);
                 }
                 
-                // config.php 파일 생성
-                $config_content = "<?php
-session_start();
-
-// 선택된 언어 설정
-if (isset(\$_GET['lang']) && in_array(\$_GET['lang'], ['ko', 'en', 'ja', 'zh'])) {
-    \$_SESSION['lang'] = \$_GET['lang'];
-} elseif (!isset(\$_SESSION['lang'])) {
-    \$_SESSION['lang'] = '{$language}';
-}
-
-// 언어 파일 로드
-\$lang_path = __DIR__ . '/lang/';
-\$lang_code = isset(\$_SESSION['lang']) ? \$_SESSION['lang'] : 'ko';
-if (file_exists(\$lang_path . \$lang_code . '.php')) {
-    \$lang = require \$lang_path . \$lang_code . '.php';
-} else {
-    \$lang = require \$lang_path . 'ja.php';
-}
-
-// DB 설정
-define('DB_HOST', '{$db_host}');
-define('DB_USER', '{$db_user}');
-define('DB_PASS', '" . addslashes($db_pass) . "');
-define('DB_NAME', '{$db_name}');
-
-// DB 연결
-function getDB() {
-  static \$pdo = null;
-  if (\$pdo === null) {
-    \$dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
-    try {
-      \$pdo = new PDO(\$dsn, DB_USER, DB_PASS, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-      ]);
-    } catch (PDOException \$e) {
-      global \$lang;
-      die(\$lang['db_conn_failed'] . ' : ' . \$e->getMessage());
-    }
-  }
-  return \$pdo;
-}
-
-// 테이블 생성 (install.php에서 호출)
-function createTables() {
-  \$db = getDB();
-  \$db->exec(\"
-    CREATE TABLE IF NOT EXISTS \`mb1_board\` (
-      \`wr_id\` int(11) NOT NULL AUTO_INCREMENT,
-      \`wr_subject\` varchar(255) NOT NULL,
-      \`wr_content\` longtext NOT NULL,
-      \`wr_name\` varchar(50) NOT NULL,
-      \`wr_datetime\` datetime NOT NULL,
-      \`wr_hit\` int(11) NOT NULL DEFAULT 0,
-      PRIMARY KEY (\`wr_id\`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-  \");
-  \$db->exec(\"
-    CREATE TABLE IF NOT EXISTS \`mb1_board_config\` (
-      \`bo_table\` varchar(100) NOT NULL,
-      \`bo_subject\` varchar(255) NOT NULL,
-      \`bo_admin\` varchar(50) NOT NULL DEFAULT 'admin',
-      \`bo_list_count\` int(11) NOT NULL DEFAULT 15,
-      \`bo_use_comment\` tinyint(1) NOT NULL DEFAULT 0,
-      \`bo_skin\` varchar(50) NOT NULL DEFAULT 'default',
-      PRIMARY KEY (`bo_table`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-  \");
-  \$db->exec(\"
-    CREATE TABLE IF NOT EXISTS \`mb1_member\` (
-      \`mb_id\` varchar(50) NOT NULL,
-      \`mb_password\` varchar(255) NOT NULL,
-      PRIMARY KEY (\`mb_id\`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-  \");
-}
-
-// 게시물 함수들
-function loadPosts() {
-  \$db = getDB();
-  \$stmt = \$db->query('SELECT * FROM mb1_board ORDER BY wr_id DESC');
-  return \$stmt->fetchAll();
-}
-
-function insertPost(\$data) {
-  \$db = getDB();
-  \$sql = 'INSERT INTO mb1_board (wr_subject, wr_content, wr_name, wr_datetime, wr_hit) VALUES (?, ?, ?, NOW(), 0)';
-  \$stmt = \$db->prepare(\$sql);
-  \$stmt->execute([\$data['title'], \$data['content'], \$data['writer']]);
-  return \$db->lastInsertId();
-}
-
-function updatePost(\$id, \$data) {
-  \$db = getDB();
-  \$sql = 'UPDATE mb1_board SET wr_subject = ?, wr_content = ?, wr_name = ?, wr_datetime = NOW() WHERE wr_id = ?';
-  \$stmt = \$db->prepare(\$sql);
-  \$stmt->execute([\$data['title'], \$data['content'], \$data['writer'], \$id]);
-}
-
-function getPost(\$id) {
-  \$db = getDB();
-  \$stmt = \$db->prepare('SELECT * FROM mb1_board WHERE wr_id = ?');
-  \$stmt->execute([\$id]);
-  return \$stmt->fetch() ?: ['wr_subject' => '', 'wr_content' => '', 'wr_name' => '', 'wr_datetime' => '', 'wr_hit' => 0];
-}
-
-function incrementView(\$id) {
-  \$db = getDB();
-  \$stmt = \$db->prepare('UPDATE mb1_board SET wr_hit = wr_hit + 1 WHERE wr_id = ?');
-  \$stmt->execute([\$id]);
-}
-
-function deletePost(\$id) {
-  \$db = getDB();
-  \$stmt = \$db->prepare('DELETE FROM mb1_board WHERE wr_id = ?');
-  \$stmt->execute([\$id]);
-}
-
-// 로그인 체크
-function isLoggedIn() {
-  if (!isset(\$_SESSION['user'])) {
-    return false;
-  }
-  
-  // 세션 타임아웃 체크 (30분)
-  if (isset(\$_SESSION['login_time']) && (time() - \$_SESSION['login_time'] > 1800)) {
-    session_unset();
-    session_destroy();
-    return false;
-  }
-  
-  return true;
-}
-
-function requireLogin() {
-  if (!isLoggedIn()) {
-    header('Location: login.php');
-    exit;
-  }
-}
-
-function verifyUser(\$id, \$pass) {
-  // 입력값 검증
-  \$id = trim(\$id);
-  \$pass = trim(\$pass);
-  
-  // SQL 인젝션 방지 및 입력값 길이 제한
-  if (empty(\$id) || empty(\$pass) || strlen(\$id) > 50 || strlen(\$pass) > 255) {
-    return false;
-  }
-  
-  \$db = getDB();
-  \$stmt = \$db->prepare('SELECT mb_password FROM mb1_member WHERE mb_id = ?');
-  \$stmt->execute([\$id]);
-  \$user = \$stmt->fetch();
-  return \$user && password_verify(\$pass, \$user['mb_password']);
-}
-
-// 회원가입 함수
-function registerUser(\$username, \$password) {
-  // 입력값 검증
-  \$username = trim(\$username);
-  \$password = trim(\$password);
-  
-  if (empty(\$username) || empty(\$password) || strlen(\$username) > 20 || strlen(\$password) > 255) {
-    return false;
-  }
-  
-  // 비밀번호 해시
-  \$password_hash = password_hash(\$password, PASSWORD_DEFAULT);
-  
-  \$db = getDB();
-  try {
-    \$stmt = \$db->prepare(\"INSERT INTO mb1_member (mb_id, mb_password) VALUES (?, ?)\");
-    return \$stmt->execute([\$username, \$password_hash]);
-  } catch (Exception \$e) {
-    // 중복 키 등 오류 처리
-    return false;
-  }
-}
-
-// 아이디 중복 체크 함수
-function isUsernameExists(\$username) {
-  \$username = trim(\$username);
-  
-  if (empty(\$username)) {
-    return false;
-  }
-  
-  \$db = getDB();
-  \$stmt = \$db->prepare('SELECT COUNT(*) as count FROM mb1_member WHERE mb_id = ?');
-  \$stmt->execute([\$username]);
-  \$result = \$stmt->fetch();
-  
-  return \$result['count'] > 0;
-}
-
-// 사용자 게시물 조회 함수
-function getUserPosts(\$username) {
-  \$username = trim(\$username);
-  
-  if (empty(\$username)) {
-    return [];
-  }
-  
-  \$db = getDB();
-  \$stmt = \$db->prepare('SELECT * FROM mb1_board WHERE wr_name = ? ORDER BY wr_id DESC');
-  \$stmt->execute([\$username]);
-  
-  return \$stmt->fetchAll();
-}
-
-// 사용자 댓글 조회 함수 (댓글 테이블이 없는 경우를 대비한 기본 구조)
-function getUserComments(\$username) {
-  \$username = trim(\$username);
-  
-  if (empty(\$username)) {
-    return [];
-  }
-  
-  // 댓글 기능이 구현되지 않은 경우 빈 배열 반환
-  // 댓글 기능 구현 시 여기에 실제 쿼리 추가
-  return [];
-}
-
-// 모든 회원 조회 함수
-function getAllUsers() {
-  \$db = getDB();
-  \$stmt = \$db->prepare('SELECT mb_id, mb_datetime FROM mb1_member ORDER BY mb_datetime DESC, mb_id ASC');
-  \$stmt->execute();
-  
-  return \$stmt->fetchAll();
-}
-
-// 회원 탈퇴 함수
-function deleteUser(\$username) {
-  \$username = trim(\$username);
-  
-  if (empty(\$username) || \$username === 'admin') {
-    return false; // 관리자 계정은 삭제 불가
-  }
-  
-  \$db = getDB();
-  
-  try {
-    // 회원이 작성한 게시물도 함께 삭제
-    \$stmt = \$db->prepare('DELETE FROM mb1_board WHERE wr_name = ?');
-    \$stmt->execute([\$username]);
-    
-    // 회원 삭제
-    \$stmt = \$db->prepare('DELETE FROM mb1_member WHERE mb_id = ?');
-    return \$stmt->execute([\$username]);
-  } catch (Exception \$e) {
-    return false;
-  }
-}
-
-function isAdmin() {
-  return !empty(\$_SESSION['user']) && \$_SESSION['user'] === 'admin';
-}
-
-function requireAdmin() {
-  if (!isAdmin()) {
-    header('Location: ../login.php');
-    exit;
-  }
-}
-
-// 스킨 설정
-define('SKIN_DIR', './skin/default');
-?>";
+                // 기본 설정 추가
+                $stmt = $pdo->prepare("INSERT INTO mb1_config (cf_use_point, cf_write_point) VALUES (0, 0)");
+                $stmt->execute();
                 
-                file_put_contents('config.php', $config_content);
+                // config.php 파일 업데이트 (DB 정보만 수정)
+                $config_path = __DIR__ . '/config.php';
+                $config_content = file_get_contents($config_path);
+                
+                // DB 설정 부분만 교체
+                $config_content = preg_replace(
+                    "/define\('DB_HOST',\s*'[^']*'\);/",
+                    "define('DB_HOST', '{$db_host}');",
+                    $config_content
+                );
+                $config_content = preg_replace(
+                    "/define\('DB_USER',\s*'[^']*'\);/",
+                    "define('DB_USER', '{$db_user}');",
+                    $config_content
+                );
+                $config_content = preg_replace(
+                    "/define\('DB_PASS',\s*'[^']*'\);/",
+                    "define('DB_PASS', '" . addslashes($db_pass) . "');",
+                    $config_content
+                );
+                $config_content = preg_replace(
+                    "/define\('DB_NAME',\s*'[^']*'\);/",
+                    "define('DB_NAME', '{$db_name}');",
+                    $config_content
+                );
+                
+                file_put_contents($config_path, $config_content);
                 
                 $success = $lang['installation_success'];
                 
-        } catch (Exception $e) {
-            $error = $lang['register_success'] . $e->getMessage();
-        }
+            } catch (Exception $e) {
+                $error = $lang['db_conn_failed'] . ': ' . $e->getMessage();
+            }
         }
     }
 }
-
-// 언어 파일 로드 (상단으로 이동됨)
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo substr($language, 0, 2); ?>">
@@ -553,6 +385,123 @@ define('SKIN_DIR', './skin/default');
             border-radius: 4px;
             text-align: center;
         }
+        
+        .success-message {
+            text-align: center;
+        }
+        
+        .success-message a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        
+        .success-message a:hover {
+            background: #0056b3;
+        }
+        
+        /* License Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 0;
+            border: 1px solid #888;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 700px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #ddd;
+        }
+        
+        .modal-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .modal-body pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+            text-align: right;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .modal-footer button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .modal-footer button:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -562,10 +511,45 @@ define('SKIN_DIR', './skin/default');
             <form method="post" style="display: inline;">
                 <input type="hidden" name="language" id="selected_language" value="<?php echo htmlspecialchars($language); ?>">
                 <div class="language-options">
+                    <div class="language-option <?php echo $language === 'ko' ? 'selected' : ''; ?>" data-lang="ko">
+                        🇰🇷 한국어
+                    </div>
+                    <div class="language-option <?php echo $language === 'en' ? 'selected' : ''; ?>" data-lang="en">
+                        🇬🇧 English
+                    </div>
                     <div class="language-option <?php echo $language === 'ja' ? 'selected' : ''; ?>" data-lang="ja">
                         🇯🇵 日本語
                     </div>
-                    <div class="language-option <?php echo $language === 'ko' ? 'selected' : ''; ?>" data-lang="ko">
+                    <div class="language-option <?php echo $language === 'zh' ? 'selected' : ''; ?>" data-lang="zh">
+                        🇨🇳 中文
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <?php if ($error): ?>
+            <div class="error"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
+        
+        <?php if ($success): ?>
+            <div class="success success-message">
+                <p><?php echo htmlspecialchars($success); ?></p>
+                <a href="index.php"><?php echo $lang['go_to_main']; ?></a>
+            </div>
+        <?php else: ?>
+            <form method="post">
+                <input type="hidden" name="action" value="install">
+                <input type="hidden" name="language" value="<?php echo htmlspecialchars($language); ?>">
+                <input type="hidden" name="license_agreed" id="license_agreed" value="0">
+                
+                <h3><?php echo $lang['db_settings']; ?></h3>
+                <div class="form-group">
+                    <label for="db_host"><?php echo $lang['db_host']; ?>:</label>
+                    <input type="text" name="db_host" id="db_host" value="localhost" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="db_user"><?php echo $lang['username']; ?>:</label>
                     <input type="text" name="db_user" id="db_user" value="root" required>
                 </div>
                 
@@ -575,7 +559,7 @@ define('SKIN_DIR', './skin/default');
                 </div>
                 
                 <div class="form-group">
-                    <label for="db_name"><?php echo $lang['db_name']; ?> :</label>
+                    <label for="db_name"><?php echo $lang['db_name']; ?>:</label>
                     <input type="text" name="db_name" id="db_name" value="microboard" required>
                 </div>
                 
@@ -600,6 +584,10 @@ define('SKIN_DIR', './skin/default');
                     <label for="license-checkbox">
                         <strong><?php echo $lang['license_agreement']; ?></strong><br>
                         <?php echo $lang['agree_message']; ?>
+                        <br>
+                        <a href="#" onclick="showLicense(); return false;" style="color: #007bff; text-decoration: underline;">
+                            <?php echo isset($lang['view_license']) ? $lang['view_license'] : 'View License'; ?>
+                        </a>
                     </label>
                 </div>
                 
@@ -624,59 +612,105 @@ define('SKIN_DIR', './skin/default');
                 
                 // 폼에 언어 설정
                 document.getElementById('selected_language').value = lang;
-                document.querySelector('input[name="language"]').value = lang;
                 
                 // 폼 자동 제출
                 document.querySelector('.language-selector form').submit();
             });
         });
         
-        // 라이선스 모달
+        // 체크박스 변경 감지
+        const licenseCheckbox = document.getElementById('license-checkbox');
+        const installBtn = document.getElementById('install-btn');
+        
+        if (licenseCheckbox && installBtn) {
+            licenseCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    document.getElementById('license_agreed').value = '1';
+                    installBtn.disabled = false;
+                } else {
+                    document.getElementById('license_agreed').value = '0';
+                    installBtn.disabled = true;
+                }
+            });
+        }
+        
+        // 폼 검증
+        const installForm = document.querySelector('form[method="post"]');
+        if (installForm && installForm.querySelector('input[name="action"]')) {
+            installForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('admin_password').value;
+                const confirmPassword = document.getElementById('admin_password_confirm').value;
+                const licenseAgreed = document.getElementById('license_agreed').value;
+                
+                if (licenseAgreed !== '1') {
+                    e.preventDefault();
+                    alert('<?php echo $lang['input_required']; ?>');
+                    return false;
+                }
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    alert('<?php echo $lang['password_mismatch']; ?>');
+                    return false;
+                }
+            });
+        }
+        
+        // 라이센스 모달 함수
         function showLicense() {
             document.getElementById('license-modal').style.display = 'block';
         }
         
-        function hideLicense() {
+        function closeLicense() {
             document.getElementById('license-modal').style.display = 'none';
         }
         
-        // 라이선스 동의 처리
-        function agreeToLicense() {
-            document.getElementById('license_agreed').value = '1';
-            document.getElementById('license-checkbox').checked = true;
-            document.getElementById('install-btn').disabled = false;
-            document.getElementById('license-modal').style.display = 'none';
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('license-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
         }
-        
-        // 체크박스 변경 감지
-        document.getElementById('license-checkbox').addEventListener('change', function() {
-            if (this.checked) {
-                document.getElementById('license_agreed').value = '1';
-                document.getElementById('install-btn').disabled = false;
-            } else {
-                document.getElementById('license_agreed').value = '0';
-                document.getElementById('install-btn').disabled = true;
-            }
-        });
-        
-        // 폼 검증
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const password = document.getElementById('admin_password').value;
-            const confirmPassword = document.getElementById('admin_password_confirm').value;
-            const licenseAgreed = document.getElementById('license_agreed').value;
-            
-            if (licenseAgreed !== '1') {
-                e.preventDefault();
-                alert('<?php echo $lang['input_required']; ?>');
-                return false;
-            }
-            
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('<?php echo $lang['password_mismatch']; ?>');
-                return false;
-            }
-        });
     </script>
+    
+    <!-- License Modal -->
+    <div id="license-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>MIT License</h2>
+                <button class="close" onclick="closeLicense()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <pre><?php
+                $license_file = __DIR__ . '/LICENSE';
+                if (file_exists($license_file)) {
+                    echo htmlspecialchars(file_get_contents($license_file));
+                } else {
+                    echo "MIT License\n\n";
+                    echo "Copyright (c) 2025 YECHANHO\n\n";
+                    echo "Permission is hereby granted, free of charge, to any person obtaining a copy\n";
+                    echo "of this software and associated documentation files (the \"Software\"), to deal\n";
+                    echo "in the Software without restriction, including without limitation the rights\n";
+                    echo "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n";
+                    echo "copies of the Software, and to permit persons to whom the Software is\n";
+                    echo "furnished to do so, subject to the following conditions:\n\n";
+                    echo "The above copyright notice and this permission notice shall be included in all\n";
+                    echo "copies or substantial portions of the Software.\n\n";
+                    echo "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n";
+                    echo "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n";
+                    echo "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n";
+                    echo "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n";
+                    echo "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n";
+                    echo "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n";
+                    echo "SOFTWARE.";
+                }
+                ?></pre>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeLicense()">Close</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

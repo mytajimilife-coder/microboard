@@ -58,17 +58,13 @@ if ($_POST) {
   }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-<title><?php echo $id ? $lang['edit'] : $lang['write_post']; ?></title>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="skin/default/style.css">
+<?php
+$page_title = $id ? $lang['edit'] : $lang['write_post'];
+require_once 'inc/header.php';
+?>
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-</head>
-<body class="write-page">
 <?php
 // 스킨 설정
 $board_skin = 'default'; // 기본 스킨
@@ -134,5 +130,4 @@ $(document).ready(function() {
   });
 });
 </script>
-</body>
-</html>
+<?php require_once 'inc/footer.php'; ?>

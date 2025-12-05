@@ -1,3 +1,4 @@
+<div class="content-wrapper">
 <div class="write-form">
     <h2><?php echo $page_title; ?></h2>
     <form action="write.php<?php echo $id ? '?id=' . $id : ''; ?>" method="post" enctype="multipart/form-data">
@@ -11,14 +12,15 @@
         </div>
         
         <div class="form-group">
-            <label><?php echo $lang['file_upload']; ?></label>
+            <label><?php echo $lang['file_upload'] ?? 'File Upload'; ?></label>
             <input type="file" name="bf_file[]" multiple>
-            <p class="help-block" style="font-size: 0.9em; color: #888; margin-top: 5px;"><?php echo $lang['file_upload_help']; ?></p>
+            <p class="help-block" style="font-size: 0.9em; color: var(--text-light); margin-top: 5px;"><?php echo $lang['file_upload_help'] ?? 'You can upload multiple files'; ?></p>
         </div>
 
-        <div class="form-actions">
+        <div class="form-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
             <button type="submit" class="btn"><?php echo $lang['save']; ?></button>
-            <a href="list.php" class="btn btn-secondary"><?php echo $lang['cancel']; ?></a>
+            <a href="list.php" class="btn btn-outline"><?php echo $lang['cancel']; ?></a>
         </div>
     </form>
+</div>
 </div>

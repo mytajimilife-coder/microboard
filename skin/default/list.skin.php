@@ -1,3 +1,4 @@
+<div class="content-wrapper">
 <div class="board-header">
     <h2><?php echo $board_config['bo_subject']; ?></h2>
     <div class="board-actions">
@@ -6,15 +7,15 @@
 </div>
 
 <!-- 검색 폼 -->
-<div class="search-form" style="margin-bottom: 20px; text-align: right;">
+<div class="search-form">
     <form action="list.php" method="get">
         <input type="hidden" name="bo_table" value="<?php echo htmlspecialchars($bo_table); ?>">
-        <select name="sfl" style="padding: 5px;">
+        <select name="sfl">
             <option value="wr_subject" <?php echo $sfl === 'wr_subject' ? 'selected' : ''; ?>><?php echo $lang['subject']; ?></option>
             <option value="wr_content" <?php echo $sfl === 'wr_content' ? 'selected' : ''; ?>><?php echo $lang['content']; ?></option>
             <option value="wr_name" <?php echo $sfl === 'wr_name' ? 'selected' : ''; ?>><?php echo $lang['writer']; ?></option>
         </select>
-        <input type="text" name="stx" value="<?php echo htmlspecialchars($stx); ?>" placeholder="<?php echo $lang['search_term']; ?>" style="padding: 5px;">
+        <input type="text" name="stx" value="<?php echo htmlspecialchars($stx); ?>" placeholder="<?php echo $lang['search_term']; ?>">
         <button type="submit" class="btn btn-sm"><?php echo $lang['search']; ?></button>
     </form>
 </div>
@@ -53,7 +54,7 @@
 </table>
 
 <!-- 페이지네이션 -->
-<div class="pagination" style="margin-top: 20px; text-align: center;">
+<div class="pagination">
     <?php
     $qstr = '&bo_table=' . $bo_table . '&sfl=' . $sfl . '&stx=' . $stx;
     if ($page > 1) {
@@ -66,7 +67,7 @@
     
     for ($i = $start_page; $i <= $end_page; $i++) {
         $active = ($i == $page) ? 'active' : '';
-        $style = ($i == $page) ? 'background: #3498db; color: white;' : '';
+        $style = ($i == $page) ? 'background: var(--primary-color); color: white;' : '';
         echo '<a href="list.php?page=' . $i . $qstr . '" class="btn btn-sm" style="' . $style . '">' . $i . '</a> ';
     }
     
@@ -75,4 +76,5 @@
         echo '<a href="list.php?page=' . $total_pages . $qstr . '" class="btn btn-sm">&gt;&gt;</a>';
     }
     ?>
+</div>
 </div>

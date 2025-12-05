@@ -43,8 +43,15 @@ function getDB() {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
       ]);
     } catch (PDOException $e) {
-      global $lang;
-      die($lang['db_conn_failed'] . ': ' . $e->getMessage());
+      // 데이터베이스 연결 실패 시 설치 페이지로 리다이렉트
+      // install.php 페이지에서는 리다이렉트하지 않도록 체크
+      $current_page = basename($_SERVER['PHP_SELF']);
+      if ($current_page !== 'install.php') {
+        header('Location: install.php');
+        exit;
+      }
+      // install.php에서 호출된 경우 예외 발생
+      throw $e;
     }
   }
   return $pdo;
@@ -667,6 +674,32 @@ if (is_dir($start_dir)) {
         foreach ($files as $file) {
             include_once $file;
         }
+    }
+}
+
+// 데이터베이스 연결 체크 (install.php, update_db*.php가 아닌 경우에만)
+$current_page = basename($_SERVER['PHP_SELF']);
+$skip_db_check = (
+    $current_page === 'install.php' || 
+    strpos($current_page, 'update_db') === 0 ||
+    defined('SKIP_DB_CHECK')
+);
+
+if (!$skip_db_check) {
+    try {
+        // 데이터베이스 연결 테스트
+        $test_db = getDB();
+        // 필수 테이블 존재 여부 확인
+        $stmt = $test_db->query("SHOW TABLES LIKE 'mb1_member'");
+        if ($stmt->rowCount() === 0) {
+            // 테이블이 없으면 설치 페이지로
+            header('Location: install.php');
+            exit;
+        }
+    } catch (Exception $e) {
+        // 연결 실패 시 설치 페이지로
+        header('Location: install.php');
+        exit;
     }
 }
 ?>

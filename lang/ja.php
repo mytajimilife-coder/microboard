@@ -1,7 +1,11 @@
 <?php
 return [
     'welcome' => 'ようこそ',
+    'welcome_to_microboard' => 'MicroBoardへようこそ',
+    'landing_description' => 'シンプルで強力な掲示板システムです。今すぐ始めましょう！',
+    'go_to_board' => '掲示板へ',
     'logout' => 'ログアウト',
+    'write' => '投稿',
     'write_post' => '投稿する',
     'board_list' => '掲示板リスト',
     'post_subject' => '件名',
@@ -155,6 +159,8 @@ return [
     'search_term' => '検索語',
     'search' => '検索',
     'attachments' => '添付ファイル',
+    'file_upload' => 'ファイルアップロード',
+    'file_upload_help' => '複数のファイルをアップロードできます',
     'comments' => 'コメント',
     'feature_secure_desc' => '一般的なWeb脆弱性に対する組み込み保護。',
     'feature_responsive' => 'レスポンシブデザイン',
