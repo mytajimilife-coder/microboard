@@ -123,30 +123,39 @@ Access the admin panel at `/admin/index.php`:
 
 ## 📁 Project Structure
 
-```
 microboard/
-├── admin/              # Admin panel
-│   ├── oauth.php      # OAuth settings
-│   ├── users.php      # User management
-│   ├── board.php      # Board management
-│   ├── config.php     # System configuration
-│   └── policy.php     # Policy management
-├── inc/               # Include files
-│   └── oauth.php      # OAuth helper functions
-├── lang/              # Language files
-│   ├── ko.php         # Korean
-│   ├── en.php         # English
-│   ├── ja.php         # Japanese
-│   └── zh.php         # Chinese
-├── plugin/            # Plugins directory
-│   └── hello_world/   # Example plugin
-├── skin/              # Board skins
-├── docs/              # GitHub Pages documentation
-├── install.php        # Installation wizard
-├── oauth_callback.php # OAuth callback handler
-├── policy.php         # Policy pages (ToS, Privacy)
-└── OAUTH_SETUP.md     # OAuth setup guide
-```
+├── admin/                  # Admin panel
+│   ├── board.php          # Board management
+│   ├── common.php         # Admin common functions
+│   ├── config.php         # System configuration
+│   ├── index.php          # Admin dashboard
+│   ├── oauth.php          # OAuth settings
+│   ├── policy.php         # Policy management
+│   └── users.php          # User management
+├── docs/                   # GitHub Pages documentation
+├── inc/                    # Include files
+│   ├── header.php         # Global header
+│   ├── footer.php         # Global footer
+│   └── oauth.php          # OAuth helper functions
+├── lang/                   # Language files (ko, en, ja, zh)
+├── plugin/                 # Plugins directory
+├── skin/                   # Board skins (default, etc.)
+├── user/                   # User pages
+│   ├── mypage.php         # User profile & activity
+│   └── withdraw.php       # Account deletion
+├── config.php              # Global configuration & functions
+├── install.php             # Installation wizard
+├── index.php               # Main landing page
+├── list.php                # Board list view
+├── view.php                # Post view
+├── write.php               # Post creation/edit
+├── login.php               # User login
+├── register.php            # User registration
+├── policy.php              # Terms & Privacy pages
+├── oauth_callback.php      # OAuth handling
+├── sitemap.php             # Sitemap generator
+├── robots.php              # Robots.txt generator
+└── OAUTH_SETUP.md          # OAuth setup guide
 
 
 ## 🔧 Configuration
@@ -172,13 +181,15 @@ Configure in Admin Panel → Configuration:
 
 MicroBoard includes built-in security features:
 
-- ✅ CSRF token protection
+- ✅ CSRF token protection (Strict mode)
 - ✅ Prepared statements (SQL Injection prevention)
 - ✅ XSS protection with htmlspecialchars
 - ✅ Session timeout (30 minutes)
 - ✅ Password hashing with bcrypt
 - ✅ OAuth state parameter validation
 - ✅ Input validation and sanitization
+- ✅ Secure File Upload (Extension Whitelisting & MIME check)
+- ✅ Strict Permission & Ownership Control
 
 ## 📖 Documentation
 
