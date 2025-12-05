@@ -82,20 +82,21 @@ require_once 'inc/header.php';
   padding: 2.5rem 2rem 2rem;
   text-align: center;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-  color: white;
+  color: white !important;
 }
 
 .login-header h2 {
   margin: 0;
   font-size: 2rem;
   font-weight: 700;
-  color: white;
+  color: white !important;
 }
 
 .login-header p {
   margin: 0.5rem 0 0;
-  opacity: 0.9;
+  opacity: 1;
   font-size: 0.95rem;
+  color: white !important;
 }
 
 .login-body {
@@ -128,6 +129,12 @@ require_once 'inc/header.php';
   font-size: 1rem;
   transition: var(--transition);
   background: var(--bg-secondary);
+  color: var(--text-color);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
 }
 
 .form-group input:focus {
@@ -168,20 +175,6 @@ require_once 'inc/header.php';
   font-size: 0.9rem;
   margin-bottom: 1rem;
   text-align: center;
-}
-
-.test-account {
-  text-align: center;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: var(--radius);
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: var(--text-light);
-}
-
-.test-account strong {
-  color: var(--text-color);
 }
 
 .divider {
@@ -327,10 +320,6 @@ require_once 'inc/header.php';
         
         <button type="submit" class="login-btn"><?php echo $lang['login']; ?></button>
       </form>
-      
-      <div class="test-account">
-        <strong><?php echo $lang['test']; ?>:</strong> admin / admin
-      </div>
       
       <?php
       // OAuth 소셜 로그인 버튼

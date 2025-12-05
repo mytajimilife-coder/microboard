@@ -140,12 +140,16 @@ if ($bg_type === 'image') {
                     <span class="username">
                         <?php echo htmlspecialchars($_SESSION['user']); ?><?php echo $lang['user_suffix']; ?>
                         <?php 
-                        $db = getDB();
-                        $stmt = $db->prepare("SELECT mb_point FROM mb1_member WHERE mb_id = ?");
-                        $stmt->execute([$_SESSION['user']]);
-                        $member = $stmt->fetch();
-                        if ($member && isset($member['mb_point'])) {
-                            echo " <span style='font-size: 0.9em; color: #ffc107;'>(" . number_format($member['mb_point']) . " P)</span>";
+                        // 포인트 시스템 사용 여부 확인
+                        $config = get_config();
+                        if (isset($config['cf_use_point']) && $config['cf_use_point']) {
+                            $db = getDB();
+                            $stmt = $db->prepare("SELECT mb_point FROM mb1_member WHERE mb_id = ?");
+                            $stmt->execute([$_SESSION['user']]);
+                            $member = $stmt->fetch();
+                            if ($member && isset($member['mb_point'])) {
+                                echo " <span style='font-size: 0.9em; color: #ffc107;'>(" . number_format($member['mb_point']) . " P)</span>";
+                            }
                         }
                         ?>
                     </span>
