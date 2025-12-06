@@ -1,225 +1,138 @@
 # MicroBoard
 
-A lightweight, high-performance bulletin board system designed for simplicity and ease of use.
+<div align="center">
+
+![MicroBoard](https://via.placeholder.com/150x150.png?text=MicroBoard)
+
+### A Lightweight, High-Performance Community Platform
+*Simple, Secure, and Extensible Bulletin Board System*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://www.php.net/)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/mytajimilife-coder/microboard)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-## ✨ Features
+[**Explore Docs**](https://mytajimilife-coder.github.io/microboard/) | [**View Demo**](#) | [**Report Bug**](https://github.com/mytajimilife-coder/microboard/issues)
 
-### Core Features
-- 🚀 **Lightweight & Fast** - Optimized for performance with minimal dependencies
-- 🌍 **Multi-language Support** - Korean, English, Japanese, and Chinese (auto-detection)
-- 📱 **Responsive Design** - Works perfectly on desktop, tablet, and mobile
-- 🔒 **Secure** - Built-in CSRF, SQL Injection, and XSS protection
-- 📝 **Rich Text Editor** - Summernote WYSIWYG with image upload
-
-### Social & Authentication
-- 🔐 **OAuth Social Login** - Google, LINE, and Apple integration
-- 👤 **User Registration** - Simple and secure registration process
-- 🔑 **Session Management** - Auto-logout after 30 minutes of inactivity
-- 🚫 **Member Blocking** - Block problematic users with reason tracking
-
-### Engagement Features
-- ⭐ **Point System** - Reward users for posting and engagement
-- 🏆 **Member Levels** - 10-level member ranking system
-- 💬 **Comment System** - Nested comments with real-time updates
-- 📊 **View Tracking** - Hit counter with duplicate prevention
-
-### Extensibility
-- 🔌 **Plugin System** - Hook-based plugin architecture for unlimited extensions
-- 🎨 **Multiple Skins** - Choose from different board layouts
-- 📄 **Policy Management** - Auto-install default Terms & Privacy Policy in 4 languages
-- 📋 **Board Directory** - Visual card-style directory for all available boards
-- 🌐 **SEO Optimized** - Auto-generated sitemaps and meta tags
-
-### Admin Features
-- 👥 **User Management** - Complete admin panel with user controls
-- 📋 **Board Management** - Create and configure multiple boards
-- 🔐 **OAuth Settings** - Configure social login providers
-- ⚙️ **System Configuration** - Customize points, permissions, and more
-
-## 🔐 OAuth Social Login
-
-MicroBoard supports seamless integration with popular OAuth providers:
-
-| Provider | Status | Setup Guide |
-|----------|--------|-------------|
-| 🔵 Google | ✅ Supported | [Google Cloud Console](https://console.cloud.google.com/) |
-| 🟢 LINE | ✅ Supported | [LINE Developers](https://developers.line.biz/console/) |
-| ⚫ Apple | ✅ Supported | [Apple Developer](https://developer.apple.com/account/) |
-
-### OAuth Features
-- ✅ Automatic button visibility based on configuration
-- ✅ Visual status indicators in admin panel
-- ✅ Secure state parameter for CSRF protection
-- ✅ Automatic user account creation
-- ✅ Multi-language support for all OAuth flows
-
-See [OAUTH_SETUP.md](OAUTH_SETUP.md) for detailed setup instructions.
-
-## 📋 Requirements
-
-- PHP 7.4 or higher
-- MySQL 5.7+ / MariaDB 10.2+
-- Apache or Nginx web server
-- PDO PHP Extension
-- cURL PHP Extension (for OAuth)
-
-## 🚀 Quick Start
-
-### Installation
-
-1. Download or clone the repository
-```bash
-git clone https://github.com/mytajimilife-coder/microboard.git
-```
-
-2. Upload files to your web server
-
-3. Navigate to `http://your-domain.com/install.php`
-
-4. Follow the installation wizard:
-   - Choose your preferred language
-   - Configure database settings
-   - Create admin account
-   - Complete installation
-
-5. Login and start using MicroBoard!
-
-### OAuth Configuration
-
-After installation, configure OAuth providers:
-
-1. Login as admin
-2. Go to **Admin Panel** → **OAuth Settings**
-3. For each provider:
-   - Enter **Client ID**
-   - Enter **Client Secret**
-   - Check **Enable** checkbox
-4. Social login buttons will automatically appear
-
-**Note:** Buttons only appear when all credentials are configured and enabled.
-
-## 🌍 Supported Languages
-
-- 🇰🇷 Korean (한국어)
-- 🇺🇸 English
-- 🇯🇵 Japanese (日本語)
-- 🇨🇳 Chinese (中文)
-
-Switch languages from the language selector on any page.
-
-## 👨‍💼 Admin Features
-
-Access the admin panel at `/admin/index.php`:
-
-- **User Management** - View, manage, and delete users
-- **Board Management** - Create and configure multiple boards
-- **OAuth Settings** - Configure social login providers
-- **Point System** - Enable/disable points and set rewards
-- **Configuration** - Customize board settings
-
-## 📁 Project Structure
-
-```
-microboard/
-├── admin/                  # Admin panel
-│   ├── board.php          # Board management
-│   ├── common.php         # Admin common functions
-│   ├── config.php         # System configuration
-│   ├── index.php          # Admin dashboard
-│   ├── oauth.php          # OAuth settings
-│   ├── policy.php         # Policy management
-│   └── users.php          # User management
-├── docs/                   # GitHub Pages documentation
-├── inc/                    # Include files
-│   ├── header.php         # Global header
-│   ├── footer.php         # Global footer
-│   └── oauth.php          # OAuth helper functions
-├── lang/                   # Language files (ko, en, ja, zh)
-├── plugin/                 # Plugins directory
-├── skin/                   # Board skins (default, etc.)
-├── user/                   # User pages
-│   ├── mypage.php         # User profile & activity
-│   └── withdraw.php       # Account deletion
-├── config.php              # Global configuration & functions
-├── install.php             # Installation wizard
-├── index.php               # Main landing page
-├── list.php                # Board list view
-├── view.php                # Post view
-├── write.php               # Post creation/edit
-├── login.php               # User login
-├── register.php            # User registration
-├── policy.php              # Terms & Privacy pages
-├── oauth_callback.php      # OAuth handling
-├── sitemap.php             # Sitemap generator
-├── robots.php              # Robots.txt generator
-└── OAUTH_SETUP.md          # OAuth setup guide
-```
-
-
-## 🔧 Configuration
-
-### Database Migration
-
-For existing installations, run database updates:
-
-```
-http://your-domain.com/update_db_oauth.php
-```
-
-This adds OAuth tables and configurations.
-
-### Point System
-
-Configure in Admin Panel → Configuration:
-- Enable/disable point system
-- Set points awarded for posting
-- Points are automatically tracked per user
-
-## 🛡️ Security
-
-MicroBoard includes built-in security features:
-
-- ✅ CSRF token protection (Strict mode)
-- ✅ Prepared statements (SQL Injection prevention)
-- ✅ XSS protection with htmlspecialchars
-- ✅ Session timeout (30 minutes)
-- ✅ Password hashing with bcrypt
-- ✅ OAuth state parameter validation
-- ✅ Input validation and sanitization
-- ✅ Secure File Upload (Extension Whitelisting & MIME check)
-- ✅ Strict Permission & Ownership Control
-
-## 📖 Documentation
-
-- [Features Guide](FEATURES.md) - Complete feature documentation (Korean)
-- [OAuth Setup Guide](OAUTH_SETUP.md) - Detailed OAuth configuration
-- [Security Guide](SECURITY.md) - Security best practices
-- [GitHub Pages](https://mytajimilife-coder.github.io/microboard/) - Online documentation
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Summernote](https://summernote.org/) - WYSIWYG editor
-- [jQuery](https://jquery.com/) - JavaScript library
-
-## 📧 Support
-
-- Create an [Issue](https://github.com/mytajimilife-coder/microboard/issues)
-- Check the [Documentation](https://mytajimilife-coder.github.io/microboard/)
+</div>
 
 ---
 
-Made with ❤️ by MicroBoard Team
+## 🚀 Overview
 
-**Version 1.0.0** | [Documentation](https://mytajimilife-coder.github.io/microboard/) | [Report Bug](https://github.com/mytajimilife-coder/microboard/issues)
+**MicroBoard** is a modern PHP-based bulletin board system designed for performance and simplicity. Unlike heavy CMS platforms, MicroBoard focuses on providing essential community features—**Membership, Posting, Comments, and Points**—without the bloat. 
+
+It is built with **vanilla PHP and MySQL**, making it easy to deploy on any standard hosting environment while offering powerful extensibility through a unique **Plugin System**.
+
+## ✨ Key Features
+
+### 🌍 Global & Multilingual
+- **4 Languages Supported:** Korean (한국어), English, Japanese (日本語), and Chinese (中文).
+- **Auto-Detection:** Automatically detects user browser language.
+- **Instant Switching:** Seamless language toggling without page reloads.
+
+### 👥 Community Engagement
+- **Point System:** Reward users for posting, commenting, and logging in. Configurable levels and ranks.
+- **Member Levels:** 10-tier ranking system with automatic promotion capabilities.
+- **Social Login (OAuth):** One-click sign-in with **Google**, **LINE**, and **Apple**.
+
+### 🛠️ Powerful Extensibility
+- **Plugin Architecture:** Hook-based system (`before_write`, `after_login`, etc.) to extend functionality without touching core code.
+- **Theme/Skin Support:** Easily customizable board skins and layout templates.
+- **Responsive Design:** Mobile-first approach ensuring perfect rendering on all devices.
+
+### 🛡️ Enterprise-Grade Security
+- **Security First:** Built-in protection against **CSRF**, **XSS**, and **SQL Injection**.
+- **Secure File Uploads:** Validates MIME types and randomizes filenames to prevent malicious execution.
+- **Policy Management:** Auto-generating "Terms of Service" and "Privacy Policy" in 4 languages.
+
+## 🏗️ Tech Stack
+
+- **Backend:** PHP 7.4+ (PDO)
+- **Database:** MySQL 5.7+ / MariaDB 10.2+
+- **Frontend:** HTML5, CSS3, Vanilla JavaScript, jQuery
+- **Editor:** Summernote WYSIWYG
+- **Server:** Apache / Nginx
+
+## 🚀 Quick Start
+
+### Prerequisites
+- PHP >= 7.4
+- MySQL or MariaDB
+- Apache/Nginx Web Server
+
+### Installation Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/mytajimilife-coder/microboard.git
+   ```
+
+2. **Upload & Configure**
+   - Upload all files to your web server root.
+   - Ensure `config.php` and `data/` directories are writable.
+
+3. **Run Installer**
+   - Navigate to `http://your-domain.com/install.php`.
+   - Follow the wizard to set up the database and admin account.
+   - *(Optional)* Delete `install.php` after success for security.
+
+4. **Post-Install Setup**
+   - Go to `/admin` to configure OAuth keys and Point settings.
+
+## 🔌 Plugin System
+
+MicroBoard features a lightweight hook system similar to WordPress. You can create custom plugins in the `plugin/` directory.
+
+**Example Hook:**
+```php
+// In your plugin file
+add_event('after_write', function($post_data) {
+    // Send email notification or log data
+    error_log("New post by: " . $post_data['author']);
+});
+```
+
+## 📂 Project Structure
+
+```text
+microboard/
+├── admin/                  # Admin Dashboard & Settings
+├── docs/                   # Documentation (GitHub Pages)
+├── lang/                   # Localization Files (ko, en, ja, zh)
+├── plugin/                 # Plugin System Directory
+├── skin/                   # Board Skins
+├── install.php             # Installation Wizard
+├── config.php              # Global Configuration
+├── index.php               # Main Entry Point
+└── OAUTH_SETUP.md          # OAuth Configuration Guide
+```
+
+## 📖 Documentation & Guides
+
+- **[Features Guide (Korean)](FEATURES.md):** Detailed breakdown of all features.
+- **[OAuth Setup Guide](OAUTH_SETUP.md):** Step-by-step instructions for Google, LINE, and Apple login.
+- **[Security Policy](SECURITY.md):** Information on security practices and vulnerability reporting.
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+## 📝 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by the MicroBoard Team</p>
+  <p>
+    <a href="https://github.com/mytajimilife-coder/microboard/issues">Report Bug</a> •
+    <a href="https://github.com/mytajimilife-coder/microboard/discussions">Request Feature</a>
+  </p>
+</div>
