@@ -97,15 +97,34 @@ add_event('after_write', function($post_data) {
 
 ```text
 microboard/
-├── admin/                  # Admin Dashboard & Settings
-├── docs/                   # Documentation (GitHub Pages)
-├── lang/                   # Localization Files (ko, en, ja, zh)
-├── plugin/                 # Plugin System Directory
-├── skin/                   # Board Skins
-├── install.php             # Installation Wizard
+├── admin/                  # Admin Panel
+│   ├── board.php           # Board Management
+│   ├── config.php          # System Configuration
+│   ├── index.php           # Dashboard
+│   ├── oauth.php           # OAuth Settings
+│   ├── policy.php          # Policy Management
+│   └── users.php           # User Management
+├── inc/                    # Core Includes
+│   ├── header.php          # Global Header
+│   ├── footer.php          # Global Footer
+│   └── oauth.php           # OAuth Helper Functions
+├── lang/                   # Localization (en, ja, ko, zh)
+├── plugin/                 # Plugin System
+├── skin/                   # Board Skins (Themes)
+├── user/                   # User Pages
+│   ├── mypage.php          # Profile & Activity
+│   └── withdraw.php        # Account Deletion
 ├── config.php              # Global Configuration
-├── index.php               # Main Entry Point
-└── OAUTH_SETUP.md          # OAuth Configuration Guide
+├── install.php             # Installation Wizard
+├── index.php               # Main Landing Page
+├── list.php                # Board List View
+├── view.php                # Post View
+├── write.php               # Post Creation/Edit
+├── login.php               # Login Page
+├── register.php            # Registration Page
+├── policy.php              # Terms & Privacy Policy
+├── oauth_callback.php      # OAuth Callback Handler
+└── sitemap.php             # Sitemap Generator
 ```
 
 ## 📖 Documentation & Guides
