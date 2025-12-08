@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="faviconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="100" fill="url(#faviconGradient)"/>
-  <path d="M130 350V162h60l66 110 66-110h60v188h-50V215l-76 125h-10l-76-125v135h-50z" fill="white"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 354.02 354.02"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-miterlimit:10;stroke-width:34.99px;}</style></defs><g id="레이어_2" data-name="레이어 2"><g id="레이어_1-2" data-name="레이어 1"><path class="cls-1" d="M103.55,250.47,232.64,121.38a60.84,60.84,0,0,1,86.06,0h0a60.84,60.84,0,0,1,0,86.06L189.61,336.53"/><path class="cls-1" d="M17.5,164.41,146.58,35.32a60.84,60.84,0,0,1,86.06,0h0a60.84,60.84,0,0,1,0,86.06L103.55,250.47"/><line class="cls-1" x1="189.61" y1="78.35" x2="96.07" y2="171.89"/><line class="cls-1" x1="275.67" y1="164.41" x2="182.13" y2="257.95"/></g></g></svg>
