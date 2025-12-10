@@ -126,6 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     CREATE TABLE IF NOT EXISTS `mb1_member` (
                         `mb_id` varchar(50) NOT NULL,
                         `mb_password` varchar(255) NOT NULL,
+                        `mb_nickname` varchar(100) NOT NULL,
+                        `mb_email` varchar(100) NOT NULL,
                         `mb_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
                         `mb_point` int(11) NOT NULL DEFAULT 0,
                         `mb_level` tinyint(4) NOT NULL DEFAULT 1,

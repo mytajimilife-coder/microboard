@@ -367,7 +367,19 @@ require_once 'inc/header.php';
           <input type="text" id="username" name="username" placeholder="<?php echo $lang['username']; ?>" maxlength="20" required autofocus>
           <small><?php echo $lang['username_help']; ?></small>
         </div>
-        
+
+        <div class="form-group">
+          <label for="nickname"><?php echo $lang['nickname'] ?? 'Nickname'; ?></label>
+          <input type="text" id="nickname" name="nickname" placeholder="<?php echo $lang['nickname'] ?? 'Nickname'; ?>" maxlength="30" required>
+          <small><?php echo $lang['nickname_help'] ?? 'Your display name (3-30 characters)'; ?></small>
+        </div>
+
+        <div class="form-group">
+          <label for="email"><?php echo $lang['email'] ?? 'Email'; ?></label>
+          <input type="email" id="email" name="email" placeholder="<?php echo $lang['email'] ?? 'Email'; ?>" maxlength="100" required>
+          <small><?php echo $lang['email_help'] ?? 'Your email address for notifications'; ?></small>
+        </div>
+
         <div class="form-group">
           <label for="password"><?php echo $lang['password']; ?></label>
           <input type="password" id="password" name="password" placeholder="<?php echo $lang['password']; ?>" maxlength="255" required>
