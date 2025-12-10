@@ -153,27 +153,41 @@ function getOAuthUserInfo($provider, $access_token) {
 
 function createOrUpdateOAuthUser($provider, $provider_user_id, $user_info) {
     $db = getDB();
-    
+
     // 이미 연동된 계정이 있는지 확인
     $stmt = $db->prepare("SELECT mb_id FROM mb1_oauth_users WHERE provider = ? AND provider_user_id = ?");
     $stmt->execute([$provider, $provider_user_id]);
     $existing = $stmt->fetch();
-    
+
     if ($existing) {
         // 기존 사용자 로그인
         return $existing['mb_id'];
     }
-    
+
     // 새 사용자 생성
     // 이메일이나 고유 ID를 기반으로 사용자명 생성
     $username = null;
-    
+    $email = null;
+    $nickname = null;
+
+    // 이메일 주소 추출
+    if (isset($user_info['email'])) {
+        $email = $user_info['email'];
+    }
+
+    // 닉네임 추출
+    if (isset($user_info['name'])) {
+        $nickname = $user_info['name'];
+    } elseif (isset($user_info['displayName'])) {
+        $nickname = $user_info['displayName'];
+    }
+
     if ($provider === 'google' && isset($user_info['email'])) {
         $username = explode('@', $user_info['email'])[0];
     } elseif ($provider === 'line' && isset($user_info['userId'])) {
         $username = 'line_' . substr($user_info['userId'], 0, 15);
     }
-    
+
     // 사용자명 중복 체크 및 고유화
     if ($username) {
         $base_username = $username;
@@ -186,24 +200,24 @@ function createOrUpdateOAuthUser($provider, $provider_user_id, $user_info) {
         // 기본 사용자명 생성
         $username = $provider . '_' . substr($provider_user_id, 0, 10);
     }
-    
+
     // 랜덤 비밀번호 생성 (OAuth 사용자는 비밀번호 로그인 불가)
     $random_password = bin2hex(random_bytes(32));
     $password_hash = password_hash($random_password, PASSWORD_DEFAULT);
-    
+
     try {
         $db->beginTransaction();
-        
-        // 회원 생성
-        $stmt = $db->prepare("INSERT INTO mb1_member (mb_id, mb_password, oauth_provider) VALUES (?, ?, ?)");
-        $stmt->execute([$username, $password_hash, $provider]);
-        
+
+        // 회원 생성 (이메일과 닉네임 포함)
+        $stmt = $db->prepare("INSERT INTO mb1_member (mb_id, mb_password, mb_nickname, mb_email, oauth_provider) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$username, $password_hash, $nickname, $email, $provider]);
+
         // OAuth 연동 정보 저장
         $stmt = $db->prepare("INSERT INTO mb1_oauth_users (mb_id, provider, provider_user_id) VALUES (?, ?, ?)");
         $stmt->execute([$username, $provider, $provider_user_id]);
-        
+
         $db->commit();
-        
+
         return $username;
     } catch (Exception $e) {
         $db->rollBack();

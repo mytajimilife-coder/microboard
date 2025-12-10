@@ -128,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         `mb_password` varchar(255) NOT NULL,
                         `mb_nickname` varchar(100) NOT NULL,
                         `mb_email` varchar(100) NOT NULL,
+                        `mb_email_verified` tinyint(1) NOT NULL DEFAULT 0,
                         `mb_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
                         `mb_point` int(11) NOT NULL DEFAULT 0,
                         `mb_level` tinyint(4) NOT NULL DEFAULT 1,
@@ -194,6 +195,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         PRIMARY KEY (`provider`, `provider_user_id`),
                         KEY `mb_id` (`mb_id`)
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+                    CREATE TABLE IF NOT EXISTS `mb1_email_settings` (
+                        `id` int(11) NOT NULL AUTO_INCREMENT,
+                        `smtp_host` varchar(255) NOT NULL,
+                        `smtp_port` int(11) NOT NULL,
+                        `smtp_username` varchar(255) NOT NULL,
+                        `smtp_password` varchar(255) NOT NULL,
+                        `smtp_encryption` varchar(50) NOT NULL,
+                        `sender_email` varchar(255) NOT NULL,
+                        `sender_name` varchar(255) NOT NULL,
+                        PRIMARY KEY (`id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                     
                     CREATE TABLE IF NOT EXISTS `mb1_policy` (

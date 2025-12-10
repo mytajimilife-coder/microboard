@@ -381,6 +381,15 @@ require_once 'inc/header.php';
         </div>
 
         <div class="form-group">
+          <label for="email_verification"><?php echo $lang['email_verification'] ?? 'Email Verification'; ?></label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="email_verification" name="email_verification" placeholder="<?php echo $lang['email_verification_code'] ?? 'Verification Code'; ?>" maxlength="6" required>
+            <button type="button" id="send_verification" class="register-btn" style="padding: 0.875rem 1rem; font-size: 0.9rem;"><?php echo $lang['send_verification_code'] ?? 'Send Code'; ?></button>
+          </div>
+          <small><?php echo $lang['email_verification_help'] ?? 'Enter the verification code sent to your email'; ?></small>
+        </div>
+
+        <div class="form-group">
           <label for="password"><?php echo $lang['password']; ?></label>
           <input type="password" id="password" name="password" placeholder="<?php echo $lang['password']; ?>" maxlength="255" required>
           <small><?php echo $lang['password_help']; ?></small>
