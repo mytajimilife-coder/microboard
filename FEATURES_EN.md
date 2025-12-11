@@ -463,6 +463,16 @@ MicroBoard protects your site with the latest security technologies.
 - **Admin Authentication**: Two-factor authentication for admin pages
 - **IP Whitelist**: Allow only specific IPs to access admin (optional)
 
+#### 🔐 Two-Factor Authentication (2FA)
+
+- **Email-based 2FA**: Enhanced account security with email-based two-factor authentication
+- **Authenticator App Support**: Compatible with Google Authenticator, Authy, and other TOTP apps
+- **QR Code Setup**: Easy setup via QR code scanning
+- **Backup Codes**: One-time use backup codes for account recovery
+- **Admin Control**: Enable/disable 2FA globally via email settings
+- **User Control**: Users can enable/disable 2FA in their profile settings
+- **Secure Login**: Additional security layer for user accounts
+
 ---
 
 ## 📦 Additional Features

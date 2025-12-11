@@ -89,6 +89,14 @@ function createTables() {
       `mb_id` varchar(50) NOT NULL,
       `mb_password` varchar(255) NOT NULL,
       `mb_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
+      `mb_nickname` varchar(100) DEFAULT NULL,
+      `mb_email` varchar(255) DEFAULT NULL,
+      `oauth_provider` varchar(50) DEFAULT NULL,
+      `mb_blocked` tinyint(1) NOT NULL DEFAULT 0,
+      `mb_blocked_reason` text DEFAULT NULL,
+      `mb_leave_date` datetime DEFAULT NULL,
+      `mb_level` int(11) NOT NULL DEFAULT 1,
+      `mb_point` int(11) NOT NULL DEFAULT 0,
       `mb_2fa_enabled` tinyint(1) NOT NULL DEFAULT 0,
       `mb_2fa_secret` varchar(255) DEFAULT NULL,
       `mb_2fa_backup_codes` text DEFAULT NULL,
@@ -396,22 +404,24 @@ function verifyUser($id, $pass) {
 }
 
 // 회원가입 함수
-function registerUser($username, $password) {
+function registerUser($username, $password, $nickname = null, $email = null) {
   // 입력값 검증
   $username = trim($username);
   $password = trim($password);
-  
+  $nickname = trim($nickname);
+  $email = trim($email);
+
   if (empty($username) || empty($password) || strlen($username) > 20 || strlen($password) > 255) {
     return false;
   }
-  
+
   // 비밀번호 해시
   $password_hash = password_hash($password, PASSWORD_DEFAULT);
-  
+
   $db = getDB();
   try {
-    $stmt = $db->prepare("INSERT INTO mb1_member (mb_id, mb_password) VALUES (?, ?)");
-    return $stmt->execute([$username, $password_hash]);
+    $stmt = $db->prepare("INSERT INTO mb1_member (mb_id, mb_password, mb_nickname, mb_email) VALUES (?, ?, ?, ?)");
+    return $stmt->execute([$username, $password_hash, $nickname, $email]);
   } catch (Exception $e) {
     // 중복 키 등 오류 처리
     return false;

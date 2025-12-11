@@ -34,12 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (isUsernameExists($username)) {
         $error = $lang['username_exists'];
       } else {
-        // 회원가입 처리
-        if (registerUser($username, $password)) {
-          $success = $lang['register_success'];
-        } else {
-          $error = $lang['register_failed'];
-        }
+      // 닉네임과 이메일 처리
+      $nickname = trim($_POST['nickname'] ?? '');
+      $email = trim($_POST['email'] ?? '');
+
+      // 회원가입 처리
+      if (registerUser($username, $password, $nickname, $email)) {
+        $success = $lang['register_success'];
+      } else {
+        $error = $lang['register_failed'];
+      }
       }
     }
   }

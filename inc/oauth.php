@@ -97,8 +97,9 @@ function exchangeOAuthCode($provider, $code) {
             break;
             
         case 'apple':
-            // Apple은 더 복잡한 JWT 토큰 생성이 필요합니다
-            // 여기서는 기본 구조만 제공
+            // Apple OAuth는 JWT 토큰 생성이 필요합니다
+            // 여기서는 기본 구조만 제공 (실제 구현 시에는 Apple 개발자 문서 참조)
+            // Apple은 클라이언트 시크릿을 JWT로 생성해야 합니다
             return null;
             
         default:
@@ -180,6 +181,8 @@ function createOrUpdateOAuthUser($provider, $provider_user_id, $user_info) {
         $nickname = $user_info['name'];
     } elseif (isset($user_info['displayName'])) {
         $nickname = $user_info['displayName'];
+    } elseif (isset($user_info['display_name'])) {
+        $nickname = $user_info['display_name'];
     }
 
     if ($provider === 'google' && isset($user_info['email'])) {
