@@ -34,23 +34,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     smtp_password = ?,
                     smtp_encryption = ?,
                     sender_email = ?,
-                    sender_name = ?");
+                    sender_name = ?,
+                    enable_2fa = ?");
+                $stmt->execute([
+                    $smtp_host,
+                    $smtp_port,
+                    $smtp_username,
+                    $smtp_password,
+                    $smtp_encryption,
+                    $sender_email,
+                    $sender_name,
+                    isset($_POST['enable_2fa']) ? 1 : 0
+                ]);
             } else {
                 // 삽입
                 $stmt = $db->prepare("INSERT INTO mb1_email_settings
-                    (smtp_host, smtp_port, smtp_username, smtp_password, smtp_encryption, sender_email, sender_name)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    (smtp_host, smtp_port, smtp_username, smtp_password, smtp_encryption, sender_email, sender_name, enable_2fa)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([
+                    $smtp_host,
+                    $smtp_port,
+                    $smtp_username,
+                    $smtp_password,
+                    $smtp_encryption,
+                    $sender_email,
+                    $sender_name,
+                    isset($_POST['enable_2fa']) ? 1 : 0
+                ]);
             }
-
-            $stmt->execute([
-                $smtp_host,
-                $smtp_port,
-                $smtp_username,
-                $smtp_password,
-                $smtp_encryption,
-                $sender_email,
-                $sender_name
-            ]);
 
             $success = $lang['email_settings_saved'] ?? 'Email settings have been saved successfully.';
         } catch (Exception $e) {
@@ -204,6 +215,45 @@ if (empty($_SESSION['csrf_token'])) {
                        value="<?php echo htmlspecialchars($email_settings['smtp_password']); ?>"
                        style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
                        required>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color); margin-top: 1.5rem;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                <?php echo $lang['email_verification_settings'] ?? 'Email Verification Settings'; ?>
+            </h3>
+
+            <div style="margin-bottom: 1rem;">
+                <label for="require_email_verification" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <?php echo $lang['require_email_verification'] ?? 'Require Email Verification for Registration'; ?>
+                </label>
+                <select id="require_email_verification" name="require_email_verification"
+                        style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                        required>
+                    <option value="1" <?php echo ($email_settings['require_email_verification'] ?? 0) == 1 ? 'selected' : ''; ?>><?php echo $lang['yes'] ?? 'Yes'; ?></option>
+                    <option value="0" <?php echo ($email_settings['require_email_verification'] ?? 0) == 0 ? 'selected' : ''; ?>><?php echo $lang['no'] ?? 'No'; ?></option>
+                </select>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['require_email_verification_help'] ?? 'If enabled, users must verify their email address before completing registration.'; ?>
+                </small>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                🔐 <?php echo $lang['2fa_settings'] ?? 'Two-Factor Authentication Settings'; ?>
+            </h3>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <input type="checkbox" id="enable_2fa" name="enable_2fa" value="1"
+                           style="margin-right: 0.5rem; vertical-align: middle;"
+                           <?php echo ($email_settings['enable_2fa'] ?? 0) == 1 ? 'checked' : ''; ?>>
+                    <?php echo $lang['enable_2fa_for_users'] ?? 'Enable Two-Factor Authentication for users'; ?>
+                </label>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['enable_2fa_help'] ?? 'If enabled, users can set up two-factor authentication for their accounts. This feature requires email settings to be properly configured.'; ?>
+                </small>
             </div>
         </div>
 

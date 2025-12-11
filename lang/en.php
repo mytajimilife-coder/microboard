@@ -219,7 +219,25 @@ return [
     'test_email_sent' => 'Test email has been sent!',
     'email_settings_saved' => 'Email settings have been saved successfully.',
     'email_settings_save_failed' => 'Failed to save email settings.',
-    
+
+    // Email Verification Settings
+    'email_verification_settings' => 'Email Verification Settings',
+    'require_email_verification' => 'Require Email Verification for Registration',
+    'require_email_verification_help' => 'If enabled, users must verify their email address before completing registration.',
+    'yes' => 'Yes',
+    'no' => 'No',
+
+    // Language Settings
+    'language_settings' => 'Language Settings',
+    'language_mode' => 'Language Mode',
+    'language_mode_help' => 'Choose between multilingual support or single language mode.',
+    'multilingual' => 'Multilingual',
+    'single_language' => 'Single Language',
+    'default_language' => 'Default Language',
+    'default_language_help' => 'Select the default language for your site.',
+    'config_management_desc' => 'Configure general settings for your MicroBoard installation.',
+    'point_settings_desc' => 'Enable or disable the point system for user activities.',
+
     // Member Management
     'member_level' => 'Member Level',
     'member_status' => 'Status',

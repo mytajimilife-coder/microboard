@@ -53,6 +53,18 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 - **Security First:** Built-in protection against **CSRF**, **XSS**, and **SQL Injection**.
 - **Secure File Uploads:** Validates MIME types and randomizes filenames to prevent malicious execution.
 - **Policy Management:** Auto-generating "Terms of Service" and "Privacy Policy" in 4 languages.
+- **Two-Factor Authentication (2FA):** Email-based 2FA system for enhanced account security. Users can enable 2FA in their profile settings, and administrators can control 2FA availability through email settings.
+
+### 🔐 Two-Factor Authentication (2FA)
+
+MicroBoard now supports **Two-Factor Authentication** for enhanced account security:
+
+- **Email-Based 2FA:** Users receive verification codes via email for secure login.
+- **Authenticator App Support:** Compatible with Google Authenticator, Authy, and other TOTP apps.
+- **QR Code Setup:** Easy setup via QR code scanning.
+- **Backup Codes:** One-time use backup codes for account recovery.
+- **Admin Control:** Administrators can enable/disable 2FA globally via email settings.
+- **User Control:** Users can enable/disable 2FA in their profile settings.
 
 ## 🏗️ Tech Stack
 
@@ -92,7 +104,7 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 4. **Post-Install Setup**
    - Go to `/admin` to configure OAuth keys and Point settings.
 
-## 🔌 Plugin System
+## � Plugin System
 
 MicroBoard features a lightweight hook system similar to WordPress. You can create custom plugins in the `plugin/` directory.
 

@@ -1,198 +1,187 @@
 <?php
 define('IN_ADMIN', true);
-$admin_title_key = 'config_management';
 require_once 'common.php';
 
-// POST 요청 처리
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $config_data = [];
-    
-    // 포인트 설정
-    $config_data['cf_use_point'] = isset($_POST['cf_use_point']) ? 1 : 0;
-    $config_data['cf_write_point'] = intval($_POST['cf_write_point']);
-    
-    // 테마 설정
-    $config_data['cf_theme'] = $_POST['cf_theme'] ?? 'light';
-    $config_data['cf_bg_type'] = $_POST['cf_bg_type'] ?? 'color';
-    $config_data['cf_bg_value'] = $_POST['cf_bg_value'] ?? '#ffffff';
-    
-    // 배경 이미지 업로드 처리
-    if (isset($_FILES['cf_bg_image']) && $_FILES['cf_bg_image']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = '../img/bg/';
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0755, true);
-        }
-        
-        $file_ext = strtolower(pathinfo($_FILES['cf_bg_image']['name'], PATHINFO_EXTENSION));
-        $allowed_ext = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        
-        if (in_array($file_ext, $allowed_ext)) {
-            $new_filename = 'bg_' . time() . '.' . $file_ext;
-            $dest_path = $upload_dir . $new_filename;
-            
-            if (move_uploaded_file($_FILES['cf_bg_image']['tmp_name'], $dest_path)) {
-                $config_data['cf_bg_type'] = 'image';
-                $config_data['cf_bg_value'] = 'img/bg/' . $new_filename;
+// 설정 저장 처리
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_config') {
+    // CSRF 토큰 검증
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+        $error = $lang['csrf_token_invalid'] ?? 'CSRF token is invalid.';
+    } else {
+        $use_point = isset($_POST['use_point']) ? 1 : 0;
+        $write_point = $_POST['write_point'] ?? 0;
+        $language_mode = $_POST['language_mode'] ?? 'multilingual';
+        $default_language = $_POST['default_language'] ?? 'en';
+
+        // 데이터베이스에 저장
+        $db = getDB();
+
+        try {
+            // 기존 설정 확인
+            $stmt = $db->prepare("SELECT COUNT(*) FROM mb1_config");
+            $stmt->execute();
+            $exists = $stmt->fetchColumn();
+
+            if ($exists > 0) {
+                // 업데이트
+                $stmt = $db->prepare("UPDATE mb1_config SET
+                    cf_use_point = ?,
+                    cf_write_point = ?,
+                    cf_language_mode = ?,
+                    cf_default_language = ?");
+            } else {
+                // 삽입
+                $stmt = $db->prepare("INSERT INTO mb1_config
+                    (cf_use_point, cf_write_point, cf_language_mode, cf_default_language)
+                    VALUES (?, ?, ?, ?)");
             }
+
+            $stmt->execute([
+                $use_point,
+                $write_point,
+                $language_mode,
+                $default_language
+            ]);
+
+            $success = $lang['settings_saved'] ?? 'Settings have been saved successfully.';
+        } catch (Exception $e) {
+            $error = $lang['error_occurred'] ?? 'An error occurred while saving settings.';
         }
     }
-    
-    update_config($config_data);
-    $success_message = $lang['settings_saved'];
 }
 
-// 현재 설정 가져오기
-$config = get_config();
+// 설정 불러오기
+$db = getDB();
+$config = [];
+try {
+    $stmt = $db->query("SELECT * FROM mb1_config LIMIT 1");
+    $config = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$config) {
+        $config = [
+            'cf_use_point' => 0,
+            'cf_write_point' => 0,
+            'cf_language_mode' => 'multilingual',
+            'cf_default_language' => 'en'
+        ];
+    }
+} catch (Exception $e) {
+    $config = [
+        'cf_use_point' => 0,
+        'cf_write_point' => 0,
+        'cf_language_mode' => 'multilingual',
+        'cf_default_language' => 'en'
+    ];
+}
 
-// 기본값 설정
-if (!isset($config['cf_theme'])) $config['cf_theme'] = 'light';
-if (!isset($config['cf_bg_type'])) $config['cf_bg_type'] = 'color';
-if (!isset($config['cf_bg_value'])) $config['cf_bg_value'] = '#ffffff';
+// CSRF 토큰 생성
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 ?>
 
-<style>
-.config-group {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 1rem;
-    margin-bottom: 1rem;
-}
+<div class="admin-card">
+    <h2 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color);">⚙️ <?php echo $lang['config_management'] ?? 'Configuration'; ?></h2>
+    <p style="font-size: 1.1rem; color: var(--text-color); margin-bottom: 2rem;">
+        <?php echo $lang['config_management_desc'] ?? 'Configure general settings for your MicroBoard installation.'; ?>
+    </p>
 
-.radio-group {
-    display: flex;
-    gap: 1.5rem;
-}
+    <?php if (isset($error)): ?>
+        <div style="background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border-left: 4px solid #ef4444;">
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+    <?php endif; ?>
 
-.radio-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    font-weight: 500;
-}
+    <?php if (isset($success)): ?>
+        <div style="background: #dcfce7; color: #15803d; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border-left: 4px solid #16a34a;">
+            <?php echo htmlspecialchars($success); ?>
+        </div>
+    <?php endif; ?>
 
-.help-text {
-    margin-top: 0.5rem;
-    color: var(--text-light);
-    font-size: 0.9rem;
-}
+    <form method="post" style="max-width: 600px;">
+        <input type="hidden" name="action" value="save_config">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
-.input-preview {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-}
-</style>
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                <?php echo $lang['point_settings'] ?? 'Point Settings'; ?>
+            </h3>
 
-<?php if (isset($success_message)): ?>
-<div style="padding: 1rem; background: var(--success-color, #28a745); color: white; border-radius: var(--radius); margin-bottom: 2rem;">
-    <?php echo $success_message; ?>
+            <div style="margin-bottom: 1rem;">
+                <label for="use_point" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <?php echo $lang['use_point'] ?? 'Use Points'; ?>
+                </label>
+                <select id="use_point" name="use_point"
+                        style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                        required>
+                    <option value="1" <?php echo ($config['cf_use_point'] ?? 0) == 1 ? 'selected' : ''; ?>><?php echo $lang['point_enabled'] ?? 'Enabled'; ?></option>
+                    <option value="0" <?php echo ($config['cf_use_point'] ?? 0) == 0 ? 'selected' : ''; ?>><?php echo $lang['point_disabled'] ?? 'Disabled'; ?></option>
+                </select>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['point_settings_desc'] ?? 'Enable or disable the point system for user activities.'; ?>
+                </small>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label for="write_point" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <?php echo $lang['write_point'] ?? 'Points for Writing'; ?>
+                </label>
+                <input type="number" id="write_point" name="write_point"
+                       value="<?php echo htmlspecialchars($config['cf_write_point'] ?? 0); ?>"
+                       style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                       required>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['point_description'] ?? 'Points awarded for writing a post (negative value to deduct)'; ?>
+                </small>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color); margin-top: 1.5rem;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                <?php echo $lang['language_settings'] ?? 'Language Settings'; ?>
+            </h3>
+
+            <div style="margin-bottom: 1rem;">
+                <label for="language_mode" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <?php echo $lang['language_mode'] ?? 'Language Mode'; ?>
+                </label>
+                <select id="language_mode" name="language_mode"
+                        style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                        required>
+                    <option value="multilingual" <?php echo ($config['cf_language_mode'] ?? 'multilingual') === 'multilingual' ? 'selected' : ''; ?>><?php echo $lang['multilingual'] ?? 'Multilingual'; ?></option>
+                    <option value="single" <?php echo ($config['cf_language_mode'] ?? 'multilingual') === 'single' ? 'selected' : ''; ?>><?php echo $lang['single_language'] ?? 'Single Language'; ?></option>
+                </select>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['language_mode_help'] ?? 'Choose between multilingual support or single language mode.'; ?>
+                </small>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label for="default_language" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <?php echo $lang['default_language'] ?? 'Default Language'; ?>
+                </label>
+                <select id="default_language" name="default_language"
+                        style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                        required>
+                    <option value="en" <?php echo ($config['cf_default_language'] ?? 'en') === 'en' ? 'selected' : ''; ?>>English</option>
+                    <option value="ko" <?php echo ($config['cf_default_language'] ?? 'en') === 'ko' ? 'selected' : ''; ?>>한국어</option>
+                    <option value="ja" <?php echo ($config['cf_default_language'] ?? 'en') === 'ja' ? 'selected' : ''; ?>>日本語</option>
+                    <option value="zh" <?php echo ($config['cf_default_language'] ?? 'en') === 'zh' ? 'selected' : ''; ?>>中文</option>
+                </select>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['default_language_help'] ?? 'Select the default language for your site.'; ?>
+                </small>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button type="submit" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                <?php echo $lang['save_settings'] ?? 'Save Settings'; ?>
+            </button>
+        </div>
+    </form>
 </div>
-<?php endif; ?>
 
-<form method="post" enctype="multipart/form-data">
-    <input type="hidden" name="act" value="save_config">
-    
-    <!-- 포인트 설정 -->
-    <div class="admin-card">
-        <h2 style="margin-top: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--secondary-color);"><?php echo $lang['point_settings']; ?></h2>
-        
-        <div class="config-group">
-            <h4 style="margin: 0 0 1rem 0;"><?php echo $lang['use_point']; ?></h4>
-            <div class="radio-group">
-                <label class="radio-label">
-                    <input type="radio" name="cf_use_point" value="1" <?php echo $config['cf_use_point'] ? 'checked' : ''; ?>>
-                    <?php echo $lang['point_enabled']; ?>
-                </label>
-                <label class="radio-label">
-                    <input type="radio" name="cf_use_point" value="0" <?php echo !$config['cf_use_point'] ? 'checked' : ''; ?>>
-                    <?php echo $lang['point_disabled']; ?>
-                </label>
-            </div>
-        </div>
-        
-        <div class="config-group">
-            <h4 style="margin: 0 0 1rem 0;"><?php echo $lang['write_point']; ?></h4>
-            <input type="number" name="cf_write_point" value="<?php echo $config['cf_write_point']; ?>" class="form-control" style="width: 200px;">
-            <p class="help-text"><?php echo $lang['point_description']; ?></p>
-        </div>
-    </div>
-
-    <!-- 테마 설정 -->
-    <div class="admin-card">
-        <h2 style="margin-top: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); color: var(--secondary-color);"><?php echo $lang['theme_settings']; ?></h2>
-        
-        <div class="config-group">
-            <h4 style="margin: 0 0 1rem 0;"><?php echo $lang['default_theme_mode']; ?></h4>
-            <div class="radio-group">
-                <label class="radio-label">
-                    <input type="radio" name="cf_theme" value="light" <?php echo $config['cf_theme'] === 'light' ? 'checked' : ''; ?>>
-                    ☀️ Light Mode
-                </label>
-                <label class="radio-label">
-                    <input type="radio" name="cf_theme" value="dark" <?php echo $config['cf_theme'] === 'dark' ? 'checked' : ''; ?>>
-                    🌙 Dark Mode
-                </label>
-            </div>
-            <p class="help-text"><?php echo $lang['default_theme_desc']; ?></p>
-        </div>
-
-        <div class="config-group">
-            <h4 style="margin: 0 0 1rem 0;"><?php echo $lang['background_settings']; ?></h4>
-            <div class="radio-group" style="margin-bottom: 1rem;">
-                <label class="radio-label">
-                    <input type="radio" name="cf_bg_type" value="color" <?php echo $config['cf_bg_type'] === 'color' ? 'checked' : ''; ?> onclick="toggleBgInput('color')">
-                    🎨 <?php echo $lang['bg_type_color']; ?>
-                </label>
-                <label class="radio-label">
-                    <input type="radio" name="cf_bg_type" value="image" <?php echo $config['cf_bg_type'] === 'image' ? 'checked' : ''; ?> onclick="toggleBgInput('image')">
-                    🖼️ <?php echo $lang['bg_type_image']; ?>
-                </label>
-            </div>
-
-            <!-- 색상 입력 -->
-            <div id="bg_color_input" class="input-preview" style="display: <?php echo $config['cf_bg_type'] === 'color' ? 'block' : 'none'; ?>;">
-                <input type="text" name="cf_bg_value" id="cf_bg_value_color" value="<?php echo $config['cf_bg_type'] === 'color' ? htmlspecialchars($config['cf_bg_value']) : ''; ?>" 
-                       placeholder="<?php echo $lang['bg_color_placeholder']; ?>"
-                       class="form-control">
-                <p class="help-text">
-                    <?php echo $lang['bg_color_help']; ?><br>
-                    Ex: <code>linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)</code>
-                </p>
-            </div>
-
-            <!-- 이미지 업로드 -->
-            <div id="bg_image_input" class="input-preview" style="display: <?php echo $config['cf_bg_type'] === 'image' ? 'block' : 'none'; ?>;">
-                <?php if ($config['cf_bg_type'] === 'image' && !empty($config['cf_bg_value'])): ?>
-                    <div style="margin-bottom: 1rem;">
-                        <img src="../<?php echo htmlspecialchars($config['cf_bg_value']); ?>" style="max-width: 200px; max-height: 150px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-                        <p class="help-text"><?php echo $lang['current_bg']; ?>: <?php echo htmlspecialchars($config['cf_bg_value']); ?></p>
-                    </div>
-                <?php endif; ?>
-                <input type="file" name="cf_bg_image" accept="image/*" class="form-control">
-                <p class="help-text"><?php echo $lang['bg_image_help']; ?></p>
-            </div>
-        </div>
-    </div>
-    
-    <div style="text-align: right;">
-        <button type="submit" class="btn-primary" style="background: var(--primary-color); color: white; border: none; padding: 0.75rem 2rem; border-radius: var(--radius); font-weight: 600; cursor: pointer;">
-            💾 <?php echo $lang['save']; ?>
-        </button>
-    </div>
-</form>
-
-<script>
-function toggleBgInput(type) {
-    document.getElementById('bg_color_input').style.display = type === 'color' ? 'block' : 'none';
-    document.getElementById('bg_image_input').style.display = type === 'image' ? 'block' : 'none';
-}
-</script>
-
-</main>
-</div>
+</main> <!-- admin-main end -->
+</div> <!-- admin-layout end -->
 </body>
 </html>

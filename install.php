@@ -164,7 +164,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     
                     CREATE TABLE IF NOT EXISTS `mb1_config` (
                         `cf_use_point` tinyint(1) NOT NULL DEFAULT 0,
-                        `cf_write_point` int(11) NOT NULL DEFAULT 0
+                        `cf_write_point` int(11) NOT NULL DEFAULT 0,
+                        `cf_language_mode` varchar(50) NOT NULL DEFAULT 'multilingual',
+                        `cf_default_language` varchar(50) NOT NULL DEFAULT 'en'
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                     
                     CREATE TABLE IF NOT EXISTS `mb1_point` (
@@ -206,6 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         `smtp_encryption` varchar(50) NOT NULL,
                         `sender_email` varchar(255) NOT NULL,
                         `sender_name` varchar(255) NOT NULL,
+                        `require_email_verification` tinyint(1) NOT NULL DEFAULT 0,
                         PRIMARY KEY (`id`)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                     

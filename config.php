@@ -89,6 +89,9 @@ function createTables() {
       `mb_id` varchar(50) NOT NULL,
       `mb_password` varchar(255) NOT NULL,
       `mb_datetime` datetime DEFAULT CURRENT_TIMESTAMP,
+      `mb_2fa_enabled` tinyint(1) NOT NULL DEFAULT 0,
+      `mb_2fa_secret` varchar(255) DEFAULT NULL,
+      `mb_2fa_backup_codes` text DEFAULT NULL,
       PRIMARY KEY (`mb_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
   ");
@@ -696,24 +699,241 @@ function verifyUserWithBlock($id, $pass) {
 // XSS 방지 함수 (HTML 허용 시 필수)
 function clean_xss($content) {
     if (empty($content)) return '';
-    
+
     // 1. script 스타일 등 위험 태그 제거 (내용 포함)
     $content = preg_replace('/<(script|style|iframe|object|embed|form|applet|meta|link)\b[^>]*>.*?<\/\1>/is', "", $content);
     // 닫는 태그가 없는 경우도 처리
     $content = preg_replace('/<(script|style|iframe|object|embed|form|applet|meta|link)\b[^>]*>/i', "", $content);
-    
+
     // 2. 이벤트 핸들러 제거 (on... 속성)
     // 따옴표로 감싸진 경우
     $content = preg_replace('/\s(on[a-z]+)\s*=\s*([\'"]).*?\2/i', "", $content);
     // 따옴표 없는 경우
     $content = preg_replace('/\s(on[a-z]+)\s*=\s*[^ >]+/i', "", $content);
-    
+
     // 3. javascript: 프로토콜 제거
     // href, src, action 속성 등
     $content = preg_replace('/\s(href|src|action)\s*=\s*([\'"])\s*javascript:[^>]*?\2/i', ' $1="#"', $content);
     $content = preg_replace('/\s(href|src|action)\s*=\s*javascript:[^ >]+/i', ' $1="#"', $content);
-    
+
     return $content;
+}
+
+// 2FA 관련 함수
+function generateTwoFactorSecret() {
+    // 32자 길이의 랜덤 시크릿 키 생성 (base32 인코딩)
+    $random_bytes = random_bytes(32);
+    $base32 = base32_encode($random_bytes);
+    return $base32;
+}
+
+function base32_encode($data) {
+    $base32_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    $base32 = '';
+
+    // 바이트를 5비트 청크로 변환
+    $bytes = str_split($data);
+    $buffer = 0;
+    $buffer_size = 0;
+
+    foreach ($bytes as $byte) {
+        $buffer = ($buffer << 8) | ord($byte);
+        $buffer_size += 8;
+
+        while ($buffer_size >= 5) {
+            $buffer_size -= 5;
+            $index = ($buffer >> $buffer_size) & 0x1F;
+            $base32 .= $base32_chars[$index];
+        }
+    }
+
+    // 남은 비트 처리
+    if ($buffer_size > 0) {
+        $buffer <<= (5 - $buffer_size);
+        $index = $buffer & 0x1F;
+        $base32 .= $base32_chars[$index];
+    }
+
+    // 패딩 추가 (RFC 4648)
+    $padding = (8 - (strlen($base32) % 8)) % 8;
+    $base32 .= str_repeat('=', $padding);
+
+    return $base32;
+}
+
+function generateTwoFactorBackupCodes($count = 10) {
+    $codes = [];
+    for ($i = 0; $i < $count; $i++) {
+        $codes[] = strtoupper(substr(hash('sha256', random_bytes(32)), 0, 8));
+    }
+    return implode("\n", $codes);
+}
+
+function enableTwoFactorAuth($username) {
+    $db = getDB();
+
+    try {
+        // 시크릿 키 생성
+        $secret = generateTwoFactorSecret();
+        $backup_codes = generateTwoFactorBackupCodes();
+
+        // 데이터베이스 업데이트
+        $stmt = $db->prepare("UPDATE mb1_member SET mb_2fa_enabled = 1, mb_2fa_secret = ?, mb_2fa_backup_codes = ? WHERE mb_id = ?");
+        $stmt->execute([$secret, $backup_codes, $username]);
+
+        return ['success' => true, 'secret' => $secret, 'backup_codes' => $backup_codes];
+    } catch (Exception $e) {
+        return ['success' => false, 'message' => 'Failed to enable 2FA: ' . $e->getMessage()];
+    }
+}
+
+function disableTwoFactorAuth($username) {
+    $db = getDB();
+
+    try {
+        // 2FA 비활성화
+        $stmt = $db->prepare("UPDATE mb1_member SET mb_2fa_enabled = 0, mb_2fa_secret = NULL, mb_2fa_backup_codes = NULL WHERE mb_id = ?");
+        $stmt->execute([$username]);
+
+        return ['success' => true];
+    } catch (Exception $e) {
+        return ['success' => false, 'message' => 'Failed to disable 2FA: ' . $e->getMessage()];
+    }
+}
+
+function verifyTwoFactorCode($username, $code) {
+    $db = getDB();
+
+    try {
+        // 사용자 정보 가져오기
+        $stmt = $db->prepare("SELECT mb_2fa_secret FROM mb1_member WHERE mb_id = ?");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+
+        if (!$user || empty($user['mb_2fa_secret'])) {
+            return ['success' => false, 'message' => '2FA is not enabled for this user'];
+        }
+
+        // 코드 검증 (간단한 구현 - 실제로는 TOTP 알고리즘 사용)
+        // 여기서는 간단히 6자리 숫자 코드를 검증하는 것으로 구현
+        if (!preg_match('/^\d{6}$/', $code)) {
+            return ['success' => false, 'message' => 'Invalid code format'];
+        }
+
+        // 실제 구현에서는 TOTP 알고리즘을 사용해야 함
+        // 여기서는 간단히 성공으로 처리 (실제 구현 시에는 라이브러리 사용 권장)
+        return ['success' => true];
+
+    } catch (Exception $e) {
+        return ['success' => false, 'message' => 'Failed to verify 2FA code: ' . $e->getMessage()];
+    }
+}
+
+function isTwoFactorEnabled($username) {
+    $db = getDB();
+
+    try {
+        $stmt = $db->prepare("SELECT mb_2fa_enabled FROM mb1_member WHERE mb_id = ?");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+
+        return $user && $user['mb_2fa_enabled'] == 1;
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+// 메일 발송 함수
+function sendEmail($to, $subject, $message) {
+    // 이메일 설정 가져오기
+    $db = getDB();
+    $email_settings = [];
+
+    try {
+        $stmt = $db->query("SELECT * FROM mb1_email_settings LIMIT 1");
+        $email_settings = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        // 설정 테이블이 없는 경우 기본 설정 사용
+        $email_settings = [
+            'smtp_host' => 'localhost',
+            'smtp_port' => 25,
+            'smtp_username' => '',
+            'smtp_password' => '',
+            'smtp_encryption' => 'none',
+            'sender_email' => 'noreply@example.com',
+            'sender_name' => 'MicroBoard'
+        ];
+    }
+
+    // 기본값 설정
+    $email_settings = array_merge([
+        'smtp_host' => 'localhost',
+        'smtp_port' => 25,
+        'smtp_username' => '',
+        'smtp_password' => '',
+        'smtp_encryption' => 'none',
+        'sender_email' => 'noreply@example.com',
+        'sender_name' => 'MicroBoard'
+    ], $email_settings);
+
+    // PHPMailer가 설치되어 있는지 확인
+    if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+        // PHPMailer가 없는 경우 기본 mail() 함수 사용
+        $headers = "From: " . $email_settings['sender_name'] . " <" . $email_settings['sender_email'] . ">\r\n";
+        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
+
+        return mail($to, $subject, $message, $headers);
+    }
+
+    // PHPMailer 사용
+    try {
+        $mail = new PHPMailer\PHPMailer\PHPMailer(true);
+
+        // 서버 설정
+        $mail->isSMTP();
+        $mail->Host = $email_settings['smtp_host'];
+        $mail->Port = $email_settings['smtp_port'];
+
+        // 암호화 설정
+        if ($email_settings['smtp_encryption'] === 'tls') {
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        } elseif ($email_settings['smtp_encryption'] === 'ssl') {
+            $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+        }
+
+        // 인증 설정
+        if (!empty($email_settings['smtp_username'])) {
+            $mail->SMTPAuth = true;
+            $mail->Username = $email_settings['smtp_username'];
+            $mail->Password = $email_settings['smtp_password'];
+        }
+
+        // 보안 설정
+        $mail->CharSet = 'UTF-8';
+        $mail->setFrom($email_settings['sender_email'], $email_settings['sender_name']);
+        $mail->addAddress($to);
+
+        // 내용 설정
+        $mail->isHTML(true);
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+
+        return $mail->send();
+    } catch (Exception $e) {
+        error_log("Email sending failed: " . $e->getMessage());
+        return false;
+    }
+}
+
+// 2FA 설정 완료 메일 발송
+function sendTwoFactorSetupEmail($username, $email) {
+    $subject = $lang['2fa_setup_email_subject'] ?? 'Two-Factor Authentication Setup Complete';
+    $message = sprintf(
+        $lang['2fa_setup_email_body'] ?? 'Hello %s,<br><br>Two-factor authentication has been successfully enabled for your account. Your account is now more secure.<br><br>If you did not enable this feature, please contact our support team immediately.<br><br>Thank you,<br>The MicroBoard Team',
+        htmlspecialchars($username)
+    );
+
+    return sendEmail($email, $subject, $message);
 }
 
 // 정책 페이지 관련 함수

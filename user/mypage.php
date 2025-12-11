@@ -302,6 +302,9 @@ require_once '../inc/header.php';
         <a href="withdraw.php" class="action-btn" onclick="return confirm('<?php echo $lang['withdraw_confirm_title']; ?>');">
             🚫 <?php echo $lang['withdraw_account']; ?>
         </a>
+        <a href="2fa_settings.php" class="action-btn" style="margin-left: 1rem;">
+            🔐 <?php echo $lang['2fa_settings'] ?? '2FA Settings'; ?>
+        </a>
     </div>
 
     <div class="mypage-stats">

@@ -248,6 +248,24 @@ return [
     'email_settings_saved' => '电子邮件设置已成功保存。',
     'email_settings_save_failed' => '保存电子邮件设置失败。',
 
+    // 电子邮件验证设置相关
+    'email_verification_settings' => '电子邮件验证设置',
+    'require_email_verification' => '注册时需要电子邮件验证',
+    'require_email_verification_help' => '如果启用，用户必须在完成注册之前验证其电子邮件地址。',
+    'yes' => '是',
+    'no' => '否',
+
+    // 语言设置相关
+    'language_settings' => '语言设置',
+    'language_mode' => '语言模式',
+    'language_mode_help' => '选择多语言支持或单一语言模式。',
+    'multilingual' => '多语言',
+    'single_language' => '单一语言',
+    'default_language' => '默认语言',
+    'default_language_help' => '选择网站的默认语言。',
+    'config_management_desc' => '配置MicroBoard的常规设置。',
+    'point_settings_desc' => '启用或禁用用户活动的积分系统。',
+
     // 会员管理相关
     'member_level' => '会员等级',
     'member_status' => '状态',

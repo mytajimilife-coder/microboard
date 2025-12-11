@@ -248,6 +248,24 @@ return [
     'email_settings_saved' => 'メール設定が正常に保存されました。',
     'email_settings_save_failed' => 'メール設定の保存に失敗しました。',
 
+    // メール認証設定関連
+    'email_verification_settings' => 'メール認証設定',
+    'require_email_verification' => '登録時のメール認証を必須にする',
+    'require_email_verification_help' => '有効にすると、ユーザーは登録を完了する前にメールアドレスを認証する必要があります。',
+    'yes' => 'はい',
+    'no' => 'いいえ',
+
+    // 言語設定関連
+    'language_settings' => '言語設定',
+    'language_mode' => '言語モード',
+    'language_mode_help' => '多言語サポートと単一言語モードから選択します。',
+    'multilingual' => '多言語',
+    'single_language' => '単一言語',
+    'default_language' => 'デフォルト言語',
+    'default_language_help' => 'サイトのデフォルト言語を選択します。',
+    'config_management_desc' => 'MicroBoardの一般設定を構成します。',
+    'point_settings_desc' => 'ユーザー活動のポイントシステムを有効または無効にします。',
+
     // 会員管理関連
     'member_level' => '会員ランク',
     'member_status' => '状態',
