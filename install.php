@@ -25,8 +25,8 @@ if (file_exists('config.php')) {
         $stmt = $test_pdo->query("SHOW TABLES LIKE 'mb1_member'");
         if ($stmt->rowCount() > 0) {
             $already_installed = true;
-            header('Location: index.php');
-            exit;
+            // 설치 완료 후에는 install.php에 접근할 수 없게 차단
+            die('<h1>Installation Already Complete</h1><p>MicroBoard has already been installed. Please access the <a href="index.php">main page</a>.</p>');
         }
     } catch (Exception $e) {
         // 연결 실패 시 설치 계속 진행
