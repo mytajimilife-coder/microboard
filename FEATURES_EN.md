@@ -473,6 +473,15 @@ MicroBoard protects your site with the latest security technologies.
 - **User Control**: Users can enable/disable 2FA in their profile settings
 - **Secure Login**: Additional security layer for user accounts
 
+#### 🎨 Theme Customization
+
+- **Favicon Upload**: Upload custom favicon for your site (ICO, PNG, JPG, GIF formats)
+- **Logo Upload**: Upload custom logo for your site (PNG, JPG, GIF, SVG formats)
+- **Size Control**: Select appropriate sizes for favicon (16x16, 32x32, 64x64) and logo (150x40, 200x50, 250x60, 300x75)
+- **Security**: File size validation (max 5MB), MIME type verification, SVG content sanitization
+- **Preview**: View current favicon and logo with their dimensions
+- **Admin Control**: Manage site branding through intuitive admin interface
+
 ---
 
 ## 📦 Additional Features

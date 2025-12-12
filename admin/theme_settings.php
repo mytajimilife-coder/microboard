@@ -5,8 +5,11 @@ require_once 'common.php';
 // 이미지 업로드 디렉토리 설정
 $upload_dir = __DIR__ . '/../img/';
 if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
+    mkdir($upload_dir, 0755, true);
 }
+
+// 최대 파일 크기 설정 (5MB)
+$max_file_size = 5 * 1024 * 1024;
 
 // 현재 설정 가져오기
 $current_settings = [
@@ -44,30 +47,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $favicon_file = $_FILES['favicon'];
             $favicon_size = $_POST['favicon_size'] ?? '32x32';
 
-            // 파일 유형 검증
-            $allowed_types = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/jpeg', 'image/gif'];
-            $file_info = finfo_open(FILEINFO_MIME_TYPE);
-            $mime_type = finfo_file($file_info, $favicon_file['tmp_name']);
-            finfo_close($file_info);
-
-            if (!in_array($mime_type, $allowed_types)) {
-                $error = $lang['invalid_file_type'] ?? 'Invalid file type for favicon';
+            // 파일 크기 검증
+            if ($favicon_file['size'] > $max_file_size) {
+                $error = $lang['upload_error_size_limit'] ?? 'File size cannot exceed 5MB';
             } else {
-                // 파일 확장자 결정
-                $ext = pathinfo($favicon_file['name'], PATHINFO_EXTENSION);
-                if (strtolower($ext) === 'ico') {
-                    $favicon_filename = 'favicon.ico';
-                } else {
-                    $favicon_filename = 'favicon.' . $ext;
-                }
+                // 파일 유형 검증
+                $allowed_types = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/jpeg', 'image/gif'];
+                $file_info = finfo_open(FILEINFO_MIME_TYPE);
+                $mime_type = finfo_file($file_info, $favicon_file['tmp_name']);
+                finfo_close($file_info);
 
-                // 파일 이동
-                if (move_uploaded_file($favicon_file['tmp_name'], $upload_dir . $favicon_filename)) {
-                    $current_settings['favicon'] = $favicon_filename;
-                    $current_settings['favicon_size'] = $favicon_size;
-                    $success = $lang['favicon_updated'] ?? 'Favicon updated successfully';
+                if (!in_array($mime_type, $allowed_types)) {
+                    $error = $lang['invalid_file_type'] ?? 'Invalid file type for favicon';
                 } else {
-                    $error = $lang['upload_failed'] ?? 'Failed to upload favicon';
+                    // 파일 확장자 결정
+                    $ext = pathinfo($favicon_file['name'], PATHINFO_EXTENSION);
+                    if (strtolower($ext) === 'ico') {
+                        $favicon_filename = 'favicon.ico';
+                    } else {
+                        $favicon_filename = 'favicon.' . $ext;
+                    }
+
+                    // 파일 이동
+                    if (move_uploaded_file($favicon_file['tmp_name'], $upload_dir . $favicon_filename)) {
+                        $current_settings['favicon'] = $favicon_filename;
+                        $current_settings['favicon_size'] = $favicon_size;
+                        $success = $lang['favicon_updated'] ?? 'Favicon updated successfully';
+                    } else {
+                        $error = $lang['upload_failed'] ?? 'Failed to upload favicon';
+                    }
                 }
             }
         }
@@ -77,32 +85,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $logo_file = $_FILES['logo'];
             $logo_size = $_POST['logo_size'] ?? '200x50';
 
-            // 파일 유형 검증
-            $allowed_types = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml'];
-            $file_info = finfo_open(FILEINFO_MIME_TYPE);
-            $mime_type = finfo_file($file_info, $logo_file['tmp_name']);
-            finfo_close($file_info);
-
-            if (!in_array($mime_type, $allowed_types)) {
-                $error = $lang['invalid_file_type'] ?? 'Invalid file type for logo';
+            // 파일 크기 검증
+            if ($logo_file['size'] > $max_file_size) {
+                $error = $lang['upload_error_size_limit'] ?? 'File size cannot exceed 5MB';
             } else {
-                // 파일 확장자 결정
-                $ext = pathinfo($logo_file['name'], PATHINFO_EXTENSION);
-                $logo_filename = 'logo.' . $ext;
+                // 파일 유형 검증
+                $allowed_types = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml'];
+                $file_info = finfo_open(FILEINFO_MIME_TYPE);
+                $mime_type = finfo_file($file_info, $logo_file['tmp_name']);
+                finfo_close($file_info);
 
-                // 파일 이동
-                if (move_uploaded_file($logo_file['tmp_name'], $upload_dir . $logo_filename)) {
-                    $current_settings['logo'] = $logo_filename;
-                    $current_settings['logo_size'] = $logo_size;
-                    $success = $lang['logo_updated'] ?? 'Logo updated successfully';
+                if (!in_array($mime_type, $allowed_types)) {
+                    $error = $lang['invalid_file_type'] ?? 'Invalid file type for logo';
                 } else {
-                    $error = $lang['upload_failed'] ?? 'Failed to upload logo';
+                    // SVG 파일 검증
+                    if (strtolower(pathinfo($logo_file['name'], PATHINFO_EXTENSION)) === 'svg') {
+                        $svg_content = file_get_contents($logo_file['tmp_name']);
+                        if (strpos($svg_content, '<script') !== false || strpos($svg_content, 'javascript:') !== false) {
+                            $error = $lang['upload_error_malicious'] ?? 'File may contain malicious code';
+                        }
+                    }
+
+                    // 파일 확장자 결정
+                    $ext = pathinfo($logo_file['name'], PATHINFO_EXTENSION);
+                    $logo_filename = 'logo.' . $ext;
+
+                    // 파일 이동
+                    if (move_uploaded_file($logo_file['tmp_name'], $upload_dir . $logo_filename)) {
+                        $current_settings['logo'] = $logo_filename;
+                        $current_settings['logo_size'] = $logo_size;
+                        $success = $lang['logo_updated'] ?? 'Logo updated successfully';
+                    } else {
+                        $error = $lang['upload_failed'] ?? 'Failed to upload logo';
+                    }
                 }
             }
         }
 
         // 설정 저장
-        file_put_contents($settings_file, json_encode($current_settings, JSON_PRETTY_PRINT));
+        $settings_json = json_encode($current_settings, JSON_PRETTY_PRINT);
+        if (file_put_contents($settings_file, $settings_json) === false) {
+            $error = $lang['upload_error_failed'] ?? 'Failed to save settings';
+        }
     }
 }
 
