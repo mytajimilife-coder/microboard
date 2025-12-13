@@ -184,3 +184,16 @@ Distributed under the MIT License. See `LICENSE` for more information.
     <a href="https://github.com/mytajimilife-coder/microboard/discussions">Request Feature</a>
   </p>
 </div>
+
+---
+
+> ⚠️ **Note:** MicroBoard v1.0.0 is currently in **Beta**. While fully functional, some features are still under active development. We welcome your feedback and contributions as we refine the platform.
+
+---
+
+**Available in:**
+
+- 🇰🇷 [한국어](README.md)
+- 🇺🇸 [English](README.md)
+- 🇯🇵 [日本語](README.md)
+- 🇨🇳 [中文](README.md)
