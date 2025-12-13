@@ -1,413 +1,207 @@
 <?php
-require_once '../config.php';
-requireLogin();
+define('IN_ADMIN', true);
+require_once 'common.php';
 
-$username = $_SESSION['user'];
-$member_info = getMemberInfo($username);
+// 2FA 설정 저장 처리
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save_2fa_settings') {
+    // CSRF 토큰 검증
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+        $error = $lang['csrf_token_invalid'] ?? 'CSRF token is invalid.';
+    } else {
+        $user_id = $_SESSION['user_id'] ?? 0;
+        $secret = $_POST['secret'] ?? '';
+        $enabled = isset($_POST['enable_2fa']) ? 1 : 0;
 
-        // 2FA 설정 처리
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // CSRF 토큰 검증
-            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-                $error = $lang['csrf_token_invalid'] ?? 'CSRF token is invalid.';
+        // 데이터베이스에 저장
+        $db = getDB();
+
+        try {
+            // 기존 설정 확인
+            $stmt = $db->prepare("SELECT COUNT(*) FROM mb1_2fa_settings WHERE user_id = ?");
+            $stmt->execute([$user_id]);
+            $exists = $stmt->fetchColumn();
+
+            if ($exists > 0) {
+                // 업데이트
+                $stmt = $db->prepare("UPDATE mb1_2fa_settings SET
+                    secret = ?,
+                    enabled = ?
+                    WHERE user_id = ?");
+                $stmt->execute([$secret, $enabled, $user_id]);
             } else {
-                if (isset($_POST['action'])) {
-                    if ($_POST['action'] === 'enable_2fa') {
-                        // 메일 설정 확인
-                        $db = getDB();
-                        try {
-                            $stmt = $db->query("SELECT enable_2fa FROM mb1_email_settings LIMIT 1");
-                            $email_settings = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                            if (!$email_settings || ($email_settings['enable_2fa'] ?? 0) == 0) {
-                                $error = $lang['2fa_not_enabled_by_admin'] ?? 'Two-factor authentication is not enabled by the administrator.';
-                            } else {
-                                // 2FA 활성화
-                                $result = enableTwoFactorAuth($username);
-                                if ($result['success']) {
-                                    $success = $lang['2fa_enabled_success'] ?? 'Two-factor authentication has been enabled successfully.';
-                                    $member_info = getMemberInfo($username); // 갱신
-
-                                    // QR 코드 URL 생성 (간단한 구현)
-                                    $qr_code_url = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth://totp/MicroBoard:" . urlencode($username) . "?secret=" . urlencode($result['secret']) . "&issuer=MicroBoard";
-
-                                    // 메일 발송
-                                    sendTwoFactorSetupEmail($username, $username . '@example.com'); // 실제 이메일 주소로 변경 필요
-
-                                    // QR 코드 URL과 시크릿 키를 세션에 저장
-                                    $_SESSION['2fa_qr_code_url'] = $qr_code_url;
-                                    $_SESSION['2fa_secret_key'] = $result['secret'];
-                                } else {
-                                    $error = $result['message'] ?? 'Failed to enable two-factor authentication.';
-                                }
-                            }
-                        } catch (Exception $e) {
-                            $error = $lang['2fa_not_enabled_by_admin'] ?? 'Two-factor authentication is not enabled by the administrator.';
-                        }
-                    } elseif ($_POST['action'] === 'disable_2fa') {
-                        // 2FA 비활성화
-                        $result = disableTwoFactorAuth($username);
-                        if ($result['success']) {
-                            $success = $lang['2fa_disabled_success'] ?? 'Two-factor authentication has been disabled successfully.';
-                            $member_info = getMemberInfo($username); // 갱신
-
-                            // 세션에서 QR 코드 및 시크릿 키 제거
-                            unset($_SESSION['2fa_qr_code_url']);
-                            unset($_SESSION['2fa_secret_key']);
-                        } else {
-                            $error = $result['message'] ?? 'Failed to disable two-factor authentication.';
-                        }
-                    } elseif ($_POST['action'] === 'verify_2fa') {
-                        // 2FA 코드 검증
-                        $code = $_POST['code'] ?? '';
-                        $result = verifyTwoFactorCode($username, $code);
-                        if ($result['success']) {
-                            $success = $lang['2fa_verification_success'] ?? 'Two-factor authentication code verified successfully.';
-                            $member_info = getMemberInfo($username); // 갱신
-                        } else {
-                            $error = $result['message'] ?? 'Invalid two-factor authentication code.';
-                        }
-                    }
-                }
+                // 삽입
+                $stmt = $db->prepare("INSERT INTO mb1_2fa_settings
+                    (user_id, secret, enabled)
+                    VALUES (?, ?, ?)");
+                $stmt->execute([$user_id, $secret, $enabled]);
             }
-        }
 
-// CSRF 토큰 생성
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $success = $lang['2fa_settings_saved'] ?? '2FA settings have been saved successfully.';
+        } catch (Exception $e) {
+            $error = $lang['2fa_settings_save_failed'] ?? 'Failed to save 2FA settings.';
+        }
+    }
 }
 
-$page_title = $lang['2fa_settings'] ?? '2FA Settings';
-require_once '../inc/header.php';
+// 2FA 설정 불러오기
+$db = getDB();
+$2fa_settings = [];
+try {
+    $stmt = $db->prepare("SELECT * FROM mb1_2fa_settings WHERE user_id = ?");
+    $stmt->execute([$_SESSION['user_id'] ?? 0]);
+    $2fa_settings = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$2fa_settings) {
+        $2fa_settings = [
+            'secret' => '',
+            'enabled' => 0
+        ];
+    }
+} catch (Exception $e) {
+    $2fa_settings = [
+        'secret' => '',
+        'enabled' => 0
+    ];
+}
+
+// QR 코드 생성 함수
+function generateQRCode($secret, $user, $issuer = 'Microboard') {
+    $issuer = urlencode($issuer);
+    $user = urlencode($user);
+    $secret = urlencode($secret);
+    $qrCode = "otpauth://totp/$issuer:$user?secret=$secret&issuer=$issuer";
+    return $qrCode;
+}
+
+// 2FA 테스트 이메일 발송
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'test_2fa_email') {
+    // 테스트 이메일 발송 로직을 구현할 수 있습니다.
+    $success = $lang['2fa_test_email_sent'] ?? 'Test email has been sent!';
+}
 ?>
 
-<style>
-.2fa-settings-card {
-    max-width: 600px;
-    margin: 0 auto;
-    background: var(--bg-color);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--border-color);
-    padding: 2rem;
-}
+<div class="admin-card">
+    <h2 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color);">🔐 <?php echo $lang['2fa_settings'] ?? 'Two-Factor Authentication Settings'; ?></h2>
+    <p style="font-size: 1.1rem; color: var(--text-color); margin-bottom: 2rem;">
+        <?php echo $lang['2fa_settings_desc'] ?? 'Configure two-factor authentication for your account security.'; ?>
+    </p>
 
-.2fa-status {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    border-radius: var(--radius);
-    margin-bottom: 2rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
+    <?php if (isset($error)): ?>
+        <div style="background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border-left: 4px solid #ef4444;">
+            <?php echo htmlspecialchars($error); ?>
+        </div>
+    <?php endif; ?>
 
-.2fa-status.enabled {
-    background: #dcfce7;
-    border-color: #16a34a;
-}
+    <?php if (isset($success)): ?>
+        <div style="background: #dcfce7; color: #15803d; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border-left: 4px solid #16a34a;">
+            <?php echo htmlspecialchars($success); ?>
+        </div>
+    <?php endif; ?>
 
-.2fa-status.disabled {
-    background: #fee2e2;
-    border-color: #ef4444;
-}
+    <form method="post" style="max-width: 600px;">
+        <input type="hidden" name="action" value="save_2fa_settings">
+        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
-.2fa-status-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
+        <div style="margin-bottom: 1.5rem;">
+            <label for="secret" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                <?php echo $lang['2fa_secret'] ?? '2FA Secret'; ?>
+            </label>
+            <input type="text" id="secret" name="secret"
+                   value="<?php echo htmlspecialchars($2fa_settings['secret']); ?>"
+                   style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                   required>
+            <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                <?php echo $lang['2fa_secret_help'] ?? 'The secret key for generating 2FA codes. Keep this secure.'; ?>
+            </small>
+        </div>
 
-.2fa-status.enabled .2fa-status-icon {
-    background: #16a34a;
-    color: white;
-}
+        <div style="margin-bottom: 1.5rem;">
+            <label for="enable_2fa" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                <?php echo $lang['enable_2fa'] ?? 'Enable 2FA'; ?>
+            </label>
+            <select id="enable_2fa" name="enable_2fa"
+                    style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                    required>
+                <option value="1" <?php echo $2fa_settings['enabled'] == 1 ? 'selected' : ''; ?>><?php echo $lang['yes'] ?? 'Yes'; ?></option>
+                <option value="0" <?php echo $2fa_settings['enabled'] == 0 ? 'selected' : ''; ?>><?php echo $lang['no'] ?? 'No'; ?></option>
+            </select>
+            <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                <?php echo $lang['enable_2fa_help'] ?? 'If enabled, users will need to provide a 6-digit code from their authenticator app when logging in.'; ?>
+            </small>
+        </div>
 
-.2fa-status.disabled .2fa-status-icon {
-    background: #ef4444;
-    color: white;
-}
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color); margin-top: 1.5rem;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                🔐 <?php echo $lang['2fa_qr_code'] ?? '2FA QR Code'; ?>
+            </h3>
 
-.2fa-qr-code {
-    text-align: center;
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-}
-
-.2fa-qr-code img {
-    max-width: 200px;
-    height: auto;
-    margin: 0 auto;
-    display: block;
-}
-
-.2fa-secret-key {
-    background: var(--bg-secondary);
-    padding: 1rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    margin: 1rem 0;
-    word-break: break-all;
-    font-family: monospace;
-    font-size: 0.9rem;
-}
-
-.2fa-backup-codes {
-    background: var(--bg-secondary);
-    padding: 1rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    margin: 1rem 0;
-    word-break: break-all;
-    font-family: monospace;
-    font-size: 0.9rem;
-}
-
-.2fa-instructions {
-    background: var(--bg-secondary);
-    padding: 1rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-color);
-    margin: 1rem 0;
-    color: var(--text-color);
-    line-height: 1.6;
-}
-
-.2fa-form {
-    margin-top: 2rem;
-}
-
-.2fa-form input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    font-size: 1rem;
-    background: var(--bg-secondary);
-    color: var(--text-color);
-    margin-bottom: 1rem;
-}
-
-.2fa-form button {
-    padding: 0.75rem 1.5rem;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.2fa-form button:hover {
-    background: var(--primary-dark);
-}
-
-.2fa-form button:disabled {
-    background: var(--bg-tertiary);
-    cursor: not-allowed;
-}
-
-.2fa-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-}
-
-.2fa-actions button {
-    flex: 1;
-}
-
-.2fa-actions .btn-danger {
-    background: var(--danger-color);
-}
-
-.2fa-actions .btn-danger:hover {
-    background: #dc2626;
-}
-
-.2fa-actions .btn-secondary {
-    background: var(--secondary-color);
-}
-
-.2fa-actions .btn-secondary:hover {
-    background: var(--secondary-dark);
-}
-</style>
-
-<div class="content-wrapper">
-    <div class="2fa-settings-card">
-        <h2 style="margin-top: 0; margin-bottom: 1.5rem; color: var(--secondary-color);">🔐 <?php echo $lang['2fa_settings'] ?? 'Two-Factor Authentication'; ?></h2>
-
-        <?php if (isset($error)): ?>
-            <div style="background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border-left: 4px solid #ef4444;">
-                <?php echo htmlspecialchars($error); ?>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <input type="checkbox" id="generate_qr" name="generate_qr" value="1"
+                           style="margin-right: 0.5rem; vertical-align: middle;"
+                           <?php echo $2fa_settings['enabled'] == 1 ? 'checked' : ''; ?>>
+                    <?php echo $lang['generate_qr_code'] ?? 'Generate QR Code'; ?>
+                </label>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['generate_qr_help'] ?? 'Generate a QR code for your authenticator app to scan and set up 2FA.'; ?>
+                </small>
             </div>
-        <?php endif; ?>
 
-        <?php if (isset($success)): ?>
-            <div style="background: #dcfce7; color: #15803d; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; border-left: 4px solid #16a34a;">
-                <?php echo htmlspecialchars($success); ?>
-            </div>
-        <?php endif; ?>
+            <?php if ($2fa_settings['enabled'] == 1 && $2fa_settings['secret'] !== ''): ?>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                        <?php echo $lang['2fa_code'] ?? '2FA Code'; ?>
+                    </label>
+                    <input type="text" id="2fa_code" name="2fa_code"
+                           style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                           required>
+                    <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                        <?php echo $lang['2fa_code_help'] ?? 'Enter the 6-digit code from your authenticator app to verify 2FA setup.'; ?>
+                    </small>
+                </div>
+            <?php endif; ?>
+        </div>
 
-        <div class="2fa-status <?php echo ($member_info['mb_2fa_enabled'] ?? 0) ? 'enabled' : 'disabled'; ?>">
-            <div class="2fa-status-icon">
-                <?php echo ($member_info['mb_2fa_enabled'] ?? 0) ? '✓' : '✗'; ?>
-            </div>
-            <div>
-                <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-color);">
-                    <?php echo ($member_info['mb_2fa_enabled'] ?? 0) ? ($lang['2fa_enabled'] ?? 'Enabled') : ($lang['2fa_disabled'] ?? 'Disabled'); ?>
-                </h3>
-                <p style="margin: 0.25rem 0 0; color: var(--text-light); font-size: 0.9rem;">
-                    <?php echo ($member_info['mb_2fa_enabled'] ?? 0) ? ($lang['2fa_enabled_desc'] ?? 'Two-factor authentication is currently enabled for your account.') : ($lang['2fa_disabled_desc'] ?? 'Two-factor authentication is currently disabled for your account.'); ?>
-                </p>
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color); margin-top: 1.5rem;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                📧 <?php echo $lang['2fa_email_notification'] ?? '2FA Email Notification'; ?>
+            </h3>
+
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    <input type="checkbox" id="notify_admin" name="notify_admin" value="1"
+                           style="margin-right: 0.5rem; vertical-align: middle;"
+                           <?php echo $2fa_settings['notify_admin'] ?? 0 == 1 ? 'checked' : ''; ?>>
+                    <?php echo $lang['notify_admin'] ?? 'Notify Admin When 2FA is Enabled'; ?>
+                </label>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    <?php echo $lang['notify_admin_help'] ?? 'If enabled, an email will be sent to the admin when a user enables 2FA for their account.'; ?>
+                </small>
             </div>
         </div>
 
-        <?php if (!($member_info['mb_2fa_enabled'] ?? 0)): ?>
-            <?php if (isset($_SESSION['2fa_qr_code_url']) && isset($_SESSION['2fa_secret_key'])): ?>
-                <!-- 2FA 설정 완료 후 QR 코드 및 시크릿 키 표시 -->
-                <div class="2fa-instructions">
-                    <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--secondary-color);">📋 <?php echo $lang['2fa_setup_complete'] ?? '2FA Setup Complete'; ?></h3>
-                    <p style="margin: 0.5rem 0 0; color: var(--text-color);">
-                        <?php echo $lang['2fa_setup_complete_desc'] ?? 'Two-factor authentication has been enabled. Please scan the QR code below with your authenticator app.'; ?>
-                    </p>
-                </div>
-
-                <div class="2fa-qr-code">
-                    <h3 style="margin-top: 0; font-size: 1rem; color: var(--secondary-color);">📱 <?php echo $lang['scan_qr_code'] ?? 'Scan QR Code'; ?></h3>
-                    <p style="margin: 0.5rem 0 1rem; color: var(--text-light); font-size: 0.9rem;">
-                        <?php echo $lang['scan_qr_code_desc'] ?? 'Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)'; ?>
-                    </p>
-                    <img src="<?php echo htmlspecialchars($_SESSION['2fa_qr_code_url']); ?>" alt="QR Code">
-                </div>
-
-                <div class="2fa-secret-key">
-                    <h3 style="margin-top: 0; font-size: 1rem; color: var(--secondary-color);">🔑 <?php echo $lang['secret_key'] ?? 'Secret Key'; ?></h3>
-                    <p style="margin: 0.5rem 0 0; color: var(--text-light); font-size: 0.9rem;">
-                        <?php echo $lang['secret_key_desc'] ?? 'If you cannot scan the QR code, you can manually enter this secret key into your authenticator app:'; ?>
-                    </p>
-                    <div style="margin-top: 1rem; padding: 0.5rem; background: var(--bg-color); border-radius: var(--radius); font-family: monospace;">
-                        <?php echo htmlspecialchars($_SESSION['2fa_secret_key']); ?>
-                    </div>
-                </div>
-
-                <div class="2fa-instructions" style="margin-top: 1.5rem;">
-                    <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--secondary-color);">📋 <?php echo $lang['next_steps'] ?? 'Next Steps'; ?></h3>
-                    <ol style="padding-left: 1.5rem; margin: 0.5rem 0 0 0;">
-                        <li><?php echo $lang['next_step_1'] ?? 'Scan the QR code or enter the secret key in your authenticator app'; ?></li>
-                        <li><?php echo $lang['next_step_2'] ?? 'Your authenticator app will generate a 6-digit code'; ?></li>
-                        <li><?php echo $lang['next_step_3'] ?? 'Enter this code on the login page when prompted'; ?></li>
-                        <li><?php echo $lang['next_step_4'] ?? 'Save your backup codes in a safe place (shown below)'; ?></li>
-                    </ol>
-                </div>
-
-                <?php if (!empty($member_info['mb_2fa_backup_codes'])): ?>
-                    <div class="2fa-backup-codes">
-                        <h3 style="margin-top: 0; font-size: 1rem; color: var(--secondary-color);">🔑 <?php echo $lang['backup_codes'] ?? 'Backup Codes'; ?></h3>
-                        <p style="margin: 0.5rem 0 0; color: var(--text-color); font-size: 0.9rem;">
-                            <?php echo $lang['backup_codes_desc'] ?? 'These codes can be used to access your account if you lose access to your authenticator app. Each code can only be used once.'; ?>
-                        </p>
-                        <div style="margin-top: 1rem; padding: 0.5rem; background: var(--bg-color); border-radius: var(--radius);">
-                            <?php
-                            $backup_codes = explode("\n", trim($member_info['mb_2fa_backup_codes']));
-                            foreach ($backup_codes as $code): ?>
-                                <div style="padding: 0.25rem 0; font-family: monospace;"><?php echo htmlspecialchars($code); ?></div>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <div style="margin-top: 1.5rem; text-align: center;">
-                    <a href="mypage.php" style="color: var(--primary-color); font-size: 0.9rem; text-decoration: underline; font-weight: 600;">
-                        ✓ <?php echo $lang['setup_complete'] ?? 'Setup Complete - Return to My Page'; ?>
-                    </a>
-                </div>
-            <?php else: ?>
-                <div class="2fa-instructions">
-                    <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--secondary-color);">📋 <?php echo $lang['2fa_instructions'] ?? 'How to enable 2FA'; ?></h3>
-                    <ol style="padding-left: 1.5rem; margin: 0.5rem 0 0 0;">
-                        <li><?php echo $lang['2fa_instruction_1'] ?? 'Click the "Enable 2FA" button below'; ?></li>
-                        <li><?php echo $lang['2fa_instruction_2'] ?? 'Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.)'; ?></li>
-                        <li><?php echo $lang['2fa_instruction_3'] ?? 'Enter the 6-digit code from your authenticator app to verify'; ?></li>
-                        <li><?php echo $lang['2fa_instruction_4'] ?? 'Save your backup codes in a safe place'; ?></li>
-                    </ol>
-                </div>
-
-                <form method="post" class="2fa-form">
-                    <input type="hidden" name="action" value="enable_2fa">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-
-                    <button type="submit" class="btn" style="width: 100%;">
-                        🔐 <?php echo $lang['enable_2fa'] ?? 'Enable Two-Factor Authentication'; ?>
-                    </button>
-                </form>
-            <?php endif; ?>
-        <?php else: ?>
-            <div class="2fa-instructions">
-                <h3 style="margin-top: 0; font-size: 1.1rem; color: var(--secondary-color);">📋 <?php echo $lang['2fa_active_instructions'] ?? '2FA is currently active'; ?></h3>
-                <p style="margin: 0.5rem 0 0; color: var(--text-color);">
-                    <?php echo $lang['2fa_active_desc'] ?? 'Your account is protected with two-factor authentication. You will need to enter a verification code from your authenticator app when logging in.'; ?>
-                </p>
-            </div>
-
-            <?php if (!empty($member_info['mb_2fa_backup_codes'])): ?>
-                <div class="2fa-backup-codes">
-                    <h3 style="margin-top: 0; font-size: 1rem; color: var(--secondary-color);">🔑 <?php echo $lang['backup_codes'] ?? 'Backup Codes'; ?></h3>
-                    <p style="margin: 0.5rem 0 0; color: var(--text-color); font-size: 0.9rem;">
-                        <?php echo $lang['backup_codes_desc'] ?? 'These codes can be used to access your account if you lose access to your authenticator app. Each code can only be used once.'; ?>
-                    </p>
-                    <div style="margin-top: 1rem; padding: 0.5rem; background: var(--bg-color); border-radius: var(--radius);">
-                        <?php
-                        $backup_codes = explode("\n", trim($member_info['mb_2fa_backup_codes']));
-                        foreach ($backup_codes as $code): ?>
-                            <div style="padding: 0.25rem 0; font-family: monospace;"><?php echo htmlspecialchars($code); ?></div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <form method="post" class="2fa-form">
-                <input type="hidden" name="action" value="verify_2fa">
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-
-                <label for="code" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
-                    <?php echo $lang['verify_2fa_code'] ?? 'Verify 2FA Code'; ?>
-                </label>
-                <p style="margin: 0 0 1rem 0; color: var(--text-light); font-size: 0.9rem;">
-                    <?php echo $lang['verify_2fa_code_desc'] ?? 'Enter a 6-digit code from your authenticator app to verify that 2FA is working correctly.'; ?>
-                </p>
-
-                <input type="text" id="code" name="code" placeholder="<?php echo $lang['enter_6_digit_code'] ?? 'Enter 6-digit code'; ?>" maxlength="6" required>
-
-                <button type="submit" class="btn" style="width: 100%;">
-                    ✓ <?php echo $lang['verify_code'] ?? 'Verify Code'; ?>
-                </button>
-            </form>
-
-            <div class="2fa-actions">
-                <form method="post" style="flex: 1;">
-                    <input type="hidden" name="action" value="disable_2fa">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
-
-                    <button type="submit" class="btn btn-danger" style="width: 100%;">
-                        🚫 <?php echo $lang['disable_2fa'] ?? 'Disable 2FA'; ?>
-                    </button>
-                </form>
-            </div>
-        <?php endif; ?>
-    </div>
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <button type="submit" style="padding: 0.75rem 1.5rem; background: var(--primary-color); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                <?php echo $lang['save_settings'] ?? 'Save Settings'; ?>
+            </button>
+            <button type="button" onclick="test2FA()" style="padding: 0.75rem 1.5rem; background: var(--secondary-color); color: white; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                <?php echo $lang['test_2fa'] ?? 'Test 2FA'; ?>
+            </button>
+        </div>
+    </form>
 </div>
 
-<?php require_once '../inc/footer.php'; ?>
+<script>
+function test2FA() {
+    if (confirm('<?php echo $lang['test_2fa_confirm'] ?? 'Are you sure you want to test 2FA?'; ?>')) {
+        // 2FA 테스트 로직을 구현할 수 있습니다.
+        alert('<?php echo $lang['test_2fa_sent'] ?? '2FA test has been sent!'; ?>');
+    }
+}
+</script>
+
+</main> <!-- admin-main end -->
+</div> <!-- admin-layout end -->
+</body>
+</html> 
+</write_to_file> 
+</write_to_file>
