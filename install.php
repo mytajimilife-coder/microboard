@@ -69,16 +69,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($license_agreed !== '1') {
         $error = $lang['input_required'];
     } else {
-        // 입력값 검증
-        if (empty($db_host) || empty($db_user) || empty($db_name) || empty($admin_username) || empty($admin_password)) {
-            $error = $lang['input_required'];
-        } elseif ($admin_password !== $admin_password_confirm) {
-            $error = $lang['password_mismatch'];
-        } elseif (strlen($admin_password) < 6) {
-            $error = $lang['invalid_password'];
-        } elseif (!in_array($language, ['ko', 'en', 'ja', 'zh'])) {
-            $error = $lang['invalid_format'];
-        } else {
+    // 입력값 검증
+    $site_title = $_POST['site_title'] ?? 'MicroBoard';
+    if (empty($db_host) || empty($db_user) || empty($db_name) || empty($admin_username) || empty($admin_password)) {
+        $error = $lang['input_required'];
+    } elseif ($admin_password !== $admin_password_confirm) {
+        $error = $lang['password_mismatch'];
+    } elseif (strlen($admin_password) < 6) {
+        $error = $lang['invalid_password'];
+    } elseif (!in_array($language, ['ko', 'en', 'ja', 'zh'])) {
+        $error = $lang['invalid_format'];
+    } else {
             try {
                 // 1. 데이터베이스 이름으로 직접 연결 시도
                 $dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";
@@ -280,8 +281,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 }
                 
                 // 기본 설정 추가
-                $stmt = $pdo->prepare("INSERT INTO mb1_config (cf_use_point, cf_write_point) VALUES (0, 0)");
-                $stmt->execute();
+                $stmt = $pdo->prepare("INSERT INTO mb1_config (cf_use_point, cf_write_point, cf_site_title) VALUES (0, 0, ?)");
+                $stmt->execute([$site_title]);
                 
                 // 다국어 정책 데이터 준비
                 $policies = [
@@ -797,15 +798,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 
                 <div class="section-title"><?php echo $lang['admin_settings']; ?></div>
                 <div class="form-group">
+                    <label for="site_title">Site Title</label>
+                    <input type="text" name="site_title" id="site_title" value="MicroBoard" placeholder="Your site title" required>
+                </div>
+
+                <div class="form-group">
                     <label for="admin_username"><?php echo $lang['username']; ?></label>
                     <input type="text" name="admin_username" id="admin_username" value="admin" placeholder="Admin ID" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="admin_password"><?php echo $lang['password']; ?></label>
                     <input type="password" name="admin_password" id="admin_password" placeholder="Min. 6 characters" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="admin_password_confirm"><?php echo $lang['password_confirm']; ?></label>
                     <input type="password" name="admin_password_confirm" id="admin_password_confirm" placeholder="Confirm Password" required>

@@ -12,6 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $write_point = $_POST['write_point'] ?? 0;
         $language_mode = $_POST['language_mode'] ?? 'multilingual';
         $default_language = $_POST['default_language'] ?? 'en';
+        $site_title = $_POST['site_title'] ?? 'MicroBoard';
 
         // 데이터베이스에 저장
         $db = getDB();
@@ -28,19 +29,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                     cf_use_point = ?,
                     cf_write_point = ?,
                     cf_language_mode = ?,
-                    cf_default_language = ?");
+                    cf_default_language = ?,
+                    cf_site_title = ?");
             } else {
                 // 삽입
                 $stmt = $db->prepare("INSERT INTO mb1_config
-                    (cf_use_point, cf_write_point, cf_language_mode, cf_default_language)
-                    VALUES (?, ?, ?, ?)");
+                    (cf_use_point, cf_write_point, cf_language_mode, cf_default_language, cf_site_title)
+                    VALUES (?, ?, ?, ?, ?)");
             }
 
             $stmt->execute([
                 $use_point,
                 $write_point,
                 $language_mode,
-                $default_language
+                $default_language,
+                $site_title
             ]);
 
             $success = $lang['settings_saved'] ?? 'Settings have been saved successfully.';
@@ -152,6 +155,19 @@ if (empty($_SESSION['csrf_token'])) {
                 </select>
                 <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
                     <?php echo $lang['language_mode_help'] ?? 'Choose between multilingual support or single language mode.'; ?>
+                </small>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label for="site_title" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-color);">
+                    Site Title
+                </label>
+                <input type="text" id="site_title" name="site_title"
+                       value="<?php echo htmlspecialchars($config['cf_site_title'] ?? 'MicroBoard'); ?>"
+                       style="width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-size: 1rem; background: var(--bg-color);"
+                       required>
+                <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
+                    Set the title of your site
                 </small>
             </div>
 

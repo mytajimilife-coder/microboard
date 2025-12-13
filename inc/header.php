@@ -98,7 +98,23 @@ if ($bg_type === 'image') {
         <div class="header-container">
             <div class="logo">
                 <a href="<?php echo $root_path; ?>index.php" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
-                    <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">MicroBoard</span>
+                    <?php
+                    // 로고 출력 훅 호출
+                    $logo = 'img/logo.png'; // 기본 로고
+                    $logo = apply_hooks('before_logo_display', $logo);
+                    
+                    // 사이트명 가져오기
+                    $site_title = 'MicroBoard'; // 기본 사이트명
+                    if (function_exists('get_config')) {
+                        $config = get_config();
+                        $site_title = $config['cf_site_title'] ?? 'MicroBoard';
+                    }
+                    ?>
+                    <?php if (file_exists($logo)): ?>
+                        <img src="<?php echo $root_path . $logo; ?>" alt="<?php echo htmlspecialchars($site_title); ?> Logo" style="height: 30px;">
+                    <?php else: ?>
+                        <span style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);"><?php echo htmlspecialchars($site_title); ?></span>
+                    <?php endif; ?>
                 </a>
             </div>
             
