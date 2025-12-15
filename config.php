@@ -49,8 +49,9 @@ function getDB() {
       // install.php 페이지에서는 리다이렉트하지 않도록 체크
       $current_page = basename($_SERVER['PHP_SELF']);
       if ($current_page !== 'install.php') {
-        header('Location: install.php');
-        exit;
+        // header('Location: install.php');
+        // exit;
+        die("<h1>DB Connection Error</h1><p>" . $e->getMessage() . "</p><p>Please check your database configuration in config.php. If you haven't installed it yet, go to <a href='install.php'>install.php</a> manually.</p>");
       }
       // install.php에서 호출된 경우 예외 발생
       throw $e;
