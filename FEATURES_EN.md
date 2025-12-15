@@ -1,578 +1,387 @@
-# MicroBoard Features Documentation
+# MicroBoard Features Guide
+
+> **Version:** 1.0.0  
+> **Last Updated:** 2025-12-15
 
 ## 📋 Table of Contents
 
-- [Core Features](#core-features)
-- [Bulletin Board System](#bulletin-board-system)
-- [Member Management](#member-management)
-- [Social Login](#social-login)
-- [Point System](#point-system)
-- [Plugin System](#plugin-system)
-- [Multilingual Support](#multilingual-support)
-- [Admin Features](#admin-features)
-- [Security Features](#security-features)
+1. [Core Features](#core-features)
+2. [Board Management](#board-management)
+3. [Permission System](#permission-system)
+4. [Search Features](#search-features)
+5. [SEO & Analytics Tools](#seo--analytics-tools)
+6. [Member Management](#member-management)
+7. [Security Features](#security-features)
+8. [Multilingual Support](#multilingual-support)
 
 ---
 
-## 🌟 Core Features
+## Core Features
 
-MicroBoard is a lightweight, high-performance bulletin board system that allows you to build a powerful community platform without the complexity of large CMS.
+### 🎨 Theme & Design
 
-### Key Features
+- **Dark Mode Support**: Automatic light/dark theme switching
+- **Responsive Design**: Perfect support for mobile, tablet, and desktop
+- **Custom Background**: Color, gradient, and image background settings
+- **Logo & Favicon**: Site branding customization
 
-- ⚡ **Lightweight & Fast**: Optimized performance with minimal dependencies
-- 🌍 **Global Support**: 4 language support (Korean, English, Japanese, Chinese)
-- 🔐 **Strong Security**: CSRF, SQL Injection, XSS protection
-- 📱 **Responsive Design**: Perfect user experience on all devices
-- 🔌 **Extensible**: Infinite expansion with plugin system
+### 📝 Board System
 
----
-
-## 📝 Bulletin Board System
-
-### Basic Board Features
-
-MicroBoard's bulletin board provides intuitive and powerful features.
-
-#### ✨ Post Writing
-
-- **WYSIWYG Editor**: Rich text editing with Summernote editor
-- **Image Upload**: Easy image attachment with drag and drop
-- **File Attachment**: Support for various file formats
-- **Real-time Preview**: Immediate preview while writing
-
-#### 🔍 Search Function
-
-- **Integrated Search**: Search by title, content, and author
-- **Filtering**: Search by selecting specific fields
-- **Sorting**: Sort by latest or views
-
-#### 💬 Comment System
-
-- **Hierarchical Comments**: Support for comments and replies
-- **Real-time Registration**: Comment writing without page refresh
-- **Author Display**: Display comment author information
-
-#### 📊 View Tracking
-
-- **IP-based Duplicate Prevention**: Prevent duplicate views
-- **Real-time Aggregation**: Real-time view count updates
-
-#### 📂 File Management
-
-- **Multiple File Attachment**: Upload multiple files simultaneously
-- **File Download**: Download and count attached files
-- **Auto Cleanup**: Automatic deletion of related files when post is deleted
-
-#### 📋 Board Directory
-
-- **Card Layout**: Card-style list to view all boards at a glance
-- **Responsive Design**: Clean grid system even on mobile
-- **Auto Generation**: Automatically reflected in the list when board is added
+- **Unlimited Boards**: Create as many boards as you want
+- **Skin System**: Independent skin application per board
+- **Editor Settings**: Choose WYSIWYG editor or plain text per board
+- **Comment System**: Enable/disable comments per board
+- **File Attachments**: Multiple file upload support
 
 ---
 
-## 👥 Member Management
+## Board Management
 
-### Member Registration and Authentication
+### Board Creation and Settings
 
-#### 📋 Member Registration
+In Admin Page → Board Management, you can configure the following:
 
-- **Simple Registration Process**: Register with just ID and password
-- **Real-time Duplicate Check**: Immediate check for ID duplication
-- **Password Encryption**: Secure password storage using bcrypt
-- **Input Validation**: Enhanced security with server-side input validation
+#### Basic Settings
+- **Board Name**: Set board title
+- **Table Name**: Use only English, numbers, and underscores
+- **Administrator**: Assign board administrator
+- **List Count**: Number of posts per page
+- **Skin**: Choose default or modern
 
-#### 🔐 Login System
+#### Feature Settings
+- ✅ **Use Comments**: Enable comment functionality
+- ✅ **Use Editor**: Summernote WYSIWYG editor
+- ✅ **Include in Search**: Include in integrated search results
 
-- **Session Management**: Secure session-based authentication
-- **Auto Logout**: Automatic logout after 30 minutes of inactivity
-- **Remember Me**: Option to maintain login status
-- **Multiple Login Methods**: Normal login + social login
+#### Permission Settings
+- **List Permission**: Level 0~10 (0: Including guests, 1: Members only, 10: Admin only)
+- **Read Permission**: Level 1~10
+- **Write Permission**: Level 1~10
+
+#### Plugin Settings
+- Select plugins to activate per board
+
+---
+
+## Permission System
 
 ### Member Level System
 
-#### 🏆 Level Management
+MicroBoard uses a 10-tier level system:
 
-- **10-level System**: Member level system from 1 to 10
-- **Level-based Permissions**: Access control based on level
-- **Auto Promotion**: Automatic level adjustment based on activity points (optional)
-- **Manual Management**: Admin can directly adjust levels
+| Level | Description | Default Permissions |
+|-------|-------------|---------------------|
+| 0 | Guest | List view only (when set) |
+| 1 | Regular Member | Basic read/write |
+| 2-9 | Tiered Members | Admin-defined permissions |
+| 10 | Administrator | All permissions |
 
-#### 🚫 Member Sanctions
+### Board-Level Permission Settings
 
-- **Block Function**: Block problematic members
-- **Block Reason Recording**: Record block reason and date
-- **Unblock**: Admin can unblock at any time
-- **Auto Notification**: Display reason to blocked members
+Each board can have independent permission settings:
 
-#### 👤 Member Profile
+#### 1. List Permission
+- Minimum level to view board list
+- Level 0: Everyone including guests
+- Level 1: Logged-in members only
+- Level 10: Admin only
 
-- **Activity History**: View written posts and comments
-- **Point History**: Detailed record of earned/deducted points
-- **Join Information**: Display join date and last login date
+#### 2. Read Permission
+- Minimum level to read post content
+- Level 1~10 configurable
 
----
+#### 3. Write Permission
+- Minimum level to create posts
+- Level 1~10 configurable
 
-## 🔐 Social Login (OAuth)
+### Permission Examples
 
-MicroBoard provides seamless integration with major social platforms.
+**Public Board (Everyone can view)**
+- List: Level 0 (Including guests)
+- Read: Level 1 (Members only)
+- Write: Level 1 (Members only)
 
-### Supported Platforms
+**Members-Only Board**
+- List: Level 1
+- Read: Level 1
+- Write: Level 1
 
-#### 🔵 Google OAuth
+**VIP Board**
+- List: Level 5
+- Read: Level 5
+- Write: Level 5
 
-- **Google Account Login**: One-click login with Google account
-- **Auto Account Creation**: Automatically create member on first login
-- **Profile Integration**: Automatically fetch Google profile information
-- **Setup**: Configure in [Google Cloud Console](https://console.cloud.google.com/)
-
-#### 🟢 LINE OAuth
-
-- **LINE Account Login**: Login integrated with LINE app
-- **Mobile Optimized**: Login flow optimized for mobile environment
-- **Auto Account Creation**: Automatically create member on first login
-- **Setup**: Configure in [LINE Developers](https://developers.line.biz/)
-
-#### ⚫ Apple OAuth
-
-- **Login with Apple**: Secure login using Apple ID
-- **Privacy Protection**: Apple's strong privacy protection features
-- **iOS Optimized**: Optimized experience on iOS/macOS devices
-- **Setup**: Configure in [Apple Developer](https://developer.apple.com/)
-
-### OAuth Features
-
-- ✅ **Auto Button Display**: Automatically display login buttons when configured
-- ✅ **Status Display**: Check OAuth configuration status in admin page
-- ✅ **CSRF Protection**: Prevent CSRF attacks with State parameter
-- ✅ **Error Handling**: Detailed error messages and logging
-- ✅ **Multilingual Support**: Multilingual support in all OAuth flows
-
-### Setup Method
-
-1. Access admin page (`/admin/oauth.php`)
-2. Enter Client ID and Secret for each platform
-3. Select enable checkbox
-4. Buttons will be automatically displayed after saving
+**Admin-Only Board**
+- List: Level 10
+- Read: Level 10
+- Write: Level 10
 
 ---
 
-## ⭐ Point System
+## Search Features
 
-A point system to encourage member activity.
+### Integrated Search
 
-### Point Accumulation
+Search across all boards simultaneously.
 
-#### 📝 Post Writing
+#### Features
+- 🔍 Search all boards at once
+- 📌 Search both titles and content
+- 🎨 Keyword highlighting
+- 📄 Pagination support (20 per page)
+- 🏷️ Board tags display
 
-- **Auto Accumulation**: Automatically accumulate points when writing posts
-- **Admin Setting**: Admin can set accumulation points
-- **Differential Accumulation**: Different point settings per board (optional)
+#### How to Use
+1. Click "🔍 Integrated Search" in header menu
+2. Enter search term
+3. Click search button or press Enter
 
-#### 💬 Comment Writing
+#### Exclude from Search
+Administrators can exclude specific boards from integrated search:
+- Admin Page → Board Management → Edit Board
+- Uncheck "Include in Search" checkbox
 
-- **Comment Points**: Accumulate points when writing comments (optional)
-- **Encourage Activity**: Encourage active community participation
+### Board Search
 
-### Point Deduction
+Search within individual boards.
 
-#### 🗑️ Post Deletion
+#### Search Options
+- **Title**: Search in post titles only
+- **Content**: Search in post content only
+- **Author**: Search by author name
+- **All** (default): Title + Content combined search
 
-- **Auto Deduction**: Automatically deduct points when post is deleted
-- **Prevent Abuse**: Prevent point accumulation through repeated writing/deletion
-
-### Point Management
-
-#### 📊 Point History
-
-- **Detailed Record**: Record all point accumulation/deduction history
-- **Date-based View**: View point history by date
-- **Reason Display**: Clearly display reason for point changes
-
-#### ⚙️ Admin Settings
-
-- **ON/OFF**: Enable/disable point system
-- **Point Settings**: Set points for posts/comments
-- **Manual Grant**: Admin can directly grant/deduct points
+#### How to Use
+1. Use search form at top of board list page
+2. Select search field (Title/Content/Author)
+3. Enter search term and click 🔍 button
 
 ---
 
-## 🔌 Plugin System
+## SEO & Analytics Tools
 
-MicroBoard provides a powerful hook-based plugin system.
+In Admin Page → SEO Settings, you can easily configure various SEO and analytics tools.
+
+### Bing Webmaster Tools
+- Register and verify with Bing search engine
+- Enter only meta tag content value
+
+### Google Search Console
+- Register and verify with Google search engine
+- Enter only meta tag content value
+
+### Google Analytics (GA4)
+- Visitor statistics and analysis
+- Enter Measurement ID (G-XXXXXXXXXX)
+- Automatically inserts tracking script
+
+### Google Tag Manager
+- Tag management system
+- Enter Container ID (GTM-XXXXXXX)
+- Automatically inserts in both Head and Body
+
+### Google AdSense
+- Ad monetization
+- Enter Client ID (ca-pub-XXXXXXXXXXXXXXXX)
+- Automatically inserts AdSense script
+
+### Custom Scripts
+
+#### Header Scripts
+- Scripts/meta tags to add in `<head>` tag
+- Additional SEO tags, fonts, CSS, etc.
+
+#### Footer Scripts
+- Scripts to add just before `</body>` tag
+- Chat widgets, analytics tools, etc.
+
+---
+
+## Member Management
+
+### Member Level System
+
+#### Level Management
+- Change levels in Admin Page → Member Management
+- Levels 1~10 configurable
+- Admin automatically gets level 10
+
+#### Member Status Management
+- **Active**: Normal activity allowed
+- **Blocked**: Login disabled, block reason displayed
+- **Withdrawn**: Member withdrawal processed
+
+### Point System
+
+#### Point Settings
+- Admin Page → Configuration → Point Settings
+- Enable/disable point system
+- Set points awarded for writing posts (negative values allowed)
+
+#### Point Distribution
+- Writing posts: Award configured points
+- Deleting posts: Deduct awarded points
+
+### OAuth Social Login
+
+#### Supported Platforms
+- Google
+- LINE
+- Apple
+
+#### Configuration
+- Admin Page → OAuth Settings
+- Enter Client ID and Secret for each platform
+- Select enable checkbox
+
+---
+
+## Security Features
+
+### CSRF Protection
+- Automatic CSRF token generation in all forms
+- Request rejection on token validation failure
+
+### XSS Prevention
+- Automatic user input escaping
+- Dangerous tag removal when HTML allowed
+- Event handler removal
+
+### SQL Injection Prevention
+- PDO Prepared Statements usage
+- All query parameters bound
+
+### File Upload Security
+- MIME type validation
+- Filename randomization
+- Only allowed extensions uploadable
+
+### Two-Factor Authentication (2FA)
+- Email-based 2FA
+- Authenticator app support (Google Authenticator, etc.)
+- QR code setup
+- Backup codes provided
+
+---
+
+## Multilingual Support
+
+### Supported Languages
+- 🇰🇷 Korean
+- 🇺🇸 English
+- 🇯🇵 Japanese
+- 🇨🇳 Chinese
+
+### Auto Language Detection
+- Browser language auto-detection
+- User-selected language saved in session
+
+### Language Switching
+- Click flag icon in header
+- Instant switch without page reload
+
+### Language File Location
+```
+lang/
+├── ko.php  # Korean
+├── en.php  # English
+├── ja.php  # Japanese
+└── zh.php  # Chinese
+```
+
+---
+
+## Plugin System
 
 ### Plugin Structure
 
-#### 📁 Plugin Directory
-
 ```
-/plugin
-  /your_plugin_name
-    - plugin.php (main plugin file)
-    - config.json (plugin settings)
-    - README.md (plugin description)
+plugin/
+└── example_plugin/
+    ├── index.php       # Plugin main file
+    └── config.json     # Plugin configuration (optional)
 ```
 
-### Hook System
-
-#### 🎯 Event Hooks
-
-MicroBoard executes hooks at various times:
+### Available Hooks
 
 - `before_write`: Before writing post
 - `after_write`: After writing post
-- `before_delete`: Before deleting post
-- `after_delete`: After deleting post
-- `before_comment`: Before writing comment
-- `after_comment`: After writing comment
 - `before_login`: Before login
 - `after_login`: After login
+- `board_head`: Board header
+- `before_logo_display`: Before logo display
 
-#### 📌 Plugin Registration
-
-```php
-// plugin.php example
-add_event('after_write', function($post_data) {
-    // Code to execute after writing post
-    error_log("New post created: " . $post_data['title']);
-}, 10); // Priority 10
-```
-
-### Plugin Features
-
-#### ⚙️ Plugin Management
-
-- **Auto Load**: Automatically recognize plugins in `/plugin` folder
-- **Enable/Disable**: Turn plugins ON/OFF in admin page
-- **Board-specific Application**: Apply plugins to specific boards only
-- **Priority**: Control execution order of multiple plugins
-
-#### 🛠️ Plugin Example
+### Plugin Example
 
 ```php
 <?php
-/**
- * Plugin Name: Hello World
- * Description: Simple example plugin
- * Version: 1.0.0
- */
+// plugin/example_plugin/index.php
 
-// Log after writing post
+// Email notification after writing post
 add_event('after_write', function($post_data) {
-    $log = "[" . date('Y-m-d H:i:s') . "] ";
-    $log .= "New post: " . $post_data['title'];
-    file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
+    $to = 'admin@example.com';
+    $subject = 'New post: ' . $post_data['title'];
+    $message = $post_data['writer'] . ' wrote a post.';
+    mail($to, $subject, $message);
 });
 
-// Notification when comment is written
-add_event('after_comment', function($comment_data) {
-    // Implement email notification, push notification, etc.
-    notify_admin($comment_data);
+// Award points after login
+add_event('after_login', function($user_data) {
+    insert_point($user_data['mb_id'], 10, 'Login bonus');
 });
 ?>
 ```
 
 ---
 
-## 🌍 Multilingual Support
+## Database Updates
 
-MicroBoard provides perfect multilingual support for global services.
+To use new features, run these scripts:
 
-### Supported Languages
+### Permission System
+```
+http://your-domain/update_db_permissions.php
+```
 
-#### 🇰🇷 Korean (Korean)
+### Editor Settings
+```
+http://your-domain/update_db_editor.php
+```
 
-- Perfect Korean translation
-- Korean date/time format
-- Optimized for Korean services
+### Integrated Search
+```
+http://your-domain/update_db_search.php
+```
 
-#### 🇺🇸 English (English)
-
-- Native-level English translation
-- International standard date/time format
-- Global service support
-
-#### 🇯🇵 Japanese (Japanese)
-
-- Natural Japanese translation
-- Japanese honorific expressions
-- Optimized for Japanese services
-
-#### 🇨🇳 Chinese (Chinese)
-
-- Accurate Chinese translation (simplified)
-- Chinese expression style
-- Chinese service support
-
-### Multilingual Features
-
-#### 🔄 Auto Language Detection
-
-- **Browser Language**: Automatically detect user browser settings
-- **IP-based**: Determine country by IP address (optional)
-- **Cookie Storage**: Automatically save selected language
-
-#### 🎛️ Language Switching
-
-- **Language Selector**: Language selection menu on all pages
-- **Instant Switch**: Change language without page refresh
-- **URL Parameter**: Specify language in `?lang=ko` format
-
-#### 📝 Translation Management
-
-- **Language Files**: Language-specific PHP files in `/lang/` folder
-- **Easy Addition**: Extend language by adding new language file
-- **Override**: Customize specific phrases
+### SEO Settings
+```
+http://your-domain/update_db_seo.php
+```
 
 ---
 
-## 👨‍💼 Admin Features
+## Troubleshooting
 
-Provides powerful and intuitive admin pages.
+### Permission Errors
+- Schema automatically updates when accessing board management page
+- Or run update script directly
 
-### Dashboard
+### No Search Results
+- Check "Include in Search" in board settings
+- Verify board table was created properly
 
-#### 📊 Statistics
-
-- **Member Statistics**: Total members, new signups, active members
-- **Post Statistics**: Total posts, daily posts
-- **Visitor Statistics**: Daily visitors, page views
-- **System Information**: Server status, disk usage
-
-### Member Management
-
-#### 👥 Member List
-
-- **View All Members**: Sort by join date or name
-- **Detailed Information**: Activity history and points for each member
-- **Bulk Actions**: Manage multiple members simultaneously
-
-#### 🔧 Member Control
-
-- **Level Change**: Bulk or individual level changes
-- **Block/Unblock**: Block and unblock problematic member accounts
-- **Delete**: Complete deletion of member and related data
-- **Point Management**: Manual point grant/deduction
-
-### Board Management
-
-#### 📋 Board Settings
-
-- **Create Board**: Create new board
-- **Permission Settings**: Set read/write permission levels
-- **Skin Selection**: Apply different skins per board
-- **List Count**: Set number of posts to display per page
-
-#### 🎨 Skin Management
-
-- **Skin List**: View list of installed skins
-- **Preview**: Preview before applying skin
-- **Settings**: Set detailed options per skin
-
-### OAuth Management
-
-#### 🔐 OAuth Settings
-
-- **Google Settings**: Enter Client ID, Secret and enable
-- **LINE Settings**: Manage Channel ID, Secret
-- **Apple Settings**: Manage Team ID, Key ID, Private Key
-- **Status Check**: Real-time check of OAuth integration status
-
-### System Settings
-
-#### ⚙️ Basic Settings
-
-- **Site Title**: Site name and description
-- **Admin Email**: Email for system notifications
-- **Default Language**: Set site default language
-- **Timezone**: Set server timezone
-
-#### 💰 Point Settings
-
-- **Point Usage**: Turn point system ON/OFF
-- **Post Points**: Points awarded for writing posts
-- **Comment Points**: Points awarded for writing comments
-- **Login Points**: Daily login bonus points
-
-### Policy Management
-
-#### 📜 Policy Pages and Auto Installation
-
-- **Auto Installation**: Automatically register terms of service and privacy policy in 4 languages (Korean/English/Japanese/Chinese) during installation
-- **Auto Display**: Automatically display policy in user's language setting
-- **Terms of Service**: Create/edit terms of service
-- **Privacy Policy**: Manage privacy policy
-- **WYSIWYG Editor**: Policy content editor
-- **Version Management**: Keep policy change history
+### SEO Tags Not Displaying
+- Verify values entered in SEO settings page
+- Check tag insertion in page source
 
 ---
 
-## 🔒 Security Features
+## Additional Resources
 
-MicroBoard protects your site with the latest security technologies.
-
-### Authentication Security
-
-#### 🔐 Password Security
-
-- **bcrypt Encryption**: Industry standard password hashing
-- **Salt**: Automatic salt generation to prevent rainbow table attacks
-- **Rehashing**: Automatic rehashing when password is changed
-
-#### ⏰ Session Security
-
-- **Session Timeout**: Automatic logout after 30 minutes of inactivity
-- **Session Regeneration**: Regenerate session ID on login
-- **Secure Cookie**: Use Secure flag in HTTPS environment
-
-### Input Security
-
-#### 🛡️ SQL Injection Prevention
-
-- **PDO Prepared Statements**: Use Prepared Statement in all queries
-- **Input Validation**: Server-side validation of all user inputs
-- **Type Check**: Strict validation of data types (number/string, etc.)
-
-#### 🚫 XSS Prevention
-
-- **htmlspecialchars**: Escape all HTML on output
-- **DOM Purify**: Client-side XSS prevention
-- **Content Security Policy**: Block script injection with CSP headers
-
-#### 🔒 CSRF Prevention
-
-- **CSRF Token**: Automatically generate CSRF token in all forms
-- **Token Validation**: Validate token on form submission
-- **SameSite Cookie**: Set SameSite attribute for cookies
-
-### File Security
-
-#### 📁 Upload Security
-
-- **File Type Validation**: Whitelist-based file extension validation
-- **File Size Limit**: Maximum upload size limit
-- **Randomize Filename**: Automatically change uploaded filename
-- **Execution Prevention**: Block script execution in upload directory
-
-### Access Control
-
-#### 🚪 Permission Management
-
-- **Level-based Access**: Access control based on member level
-- **Admin Authentication**: Two-factor authentication for admin pages
-- **IP Whitelist**: Allow only specific IPs to access admin (optional)
-
-#### 🔐 Two-Factor Authentication (2FA)
-
-- **Email-based 2FA**: Enhanced account security with email-based two-factor authentication
-- **Authenticator App Support**: Compatible with Google Authenticator, Authy, and other TOTP apps
-- **QR Code Setup**: Easy setup via QR code scanning
-- **Backup Codes**: One-time use backup codes for account recovery
-- **Admin Control**: Enable/disable 2FA globally via email settings
-- **User Control**: Users can enable/disable 2FA in their profile settings
-- **Secure Login**: Additional security layer for user accounts
-
-#### 🎨 Theme Customization
-
-- **Favicon Upload**: Upload custom favicon for your site (ICO, PNG, JPG, GIF formats)
-- **Logo Upload**: Upload custom logo for your site (PNG, JPG, GIF, SVG formats)
-- **Size Control**: Select appropriate sizes for favicon (16x16, 32x32, 64x64) and logo (150x40, 200x50, 250x60, 300x75)
-- **Security**: File size validation (max 5MB), MIME type verification, SVG content sanitization
-- **Preview**: View current favicon and logo with their dimensions
-- **Admin Control**: Manage site branding through intuitive admin interface
+- [GitHub Repository](https://github.com/mytajimilife-coder/microboard)
+- [GitHub Pages Documentation](https://mytajimilife-coder.github.io/microboard/)
+- [Issue Reports](https://github.com/mytajimilife-coder/microboard/issues)
 
 ---
 
-## 📦 Additional Features
-
-### 📮 Email Notifications (Optional)
-
-- Welcome email on member registration
-- Comment notification email
-- Password reset email
-- Admin notification email
-
-### 🔍 SEO Optimization
-
-- Auto generation of meta tags
-- Auto generation of sitemap
-- Robots.txt management
-- URL structure optimization
-
-### 📊 Logging
-
-- Error log recording
-- Access log recording
-- Admin action log
-- Log retention and deletion policy
-
----
-
-## 🚀 Performance Optimization
-
-### ⚡ Caching
-
-- Database query caching
-- Page caching (optional)
-- Static file caching
-
-### 📉 Optimization
-
-- Auto image compression
-- CSS/JS compression and merging
-- Lazy Loading
-- CDN support
-
----
-
-## 📱 Mobile Support
-
-### 📲 Responsive Design
-
-- **Perfect Responsive**: Optimized for all screen sizes
-- **Touch Optimized**: Touch interface support
-- **Mobile Menu**: Mobile-specific navigation
-- **Fast Loading**: Optimized for mobile environment
-
----
-
-## 🔄 Update and Migration
-
-### 📥 Update
-
-- **Auto Update Check**: Automatically detect new versions
-- **One-click Update**: Update with one button
-- **Auto Backup**: Automatic backup before update
-
-### 🔄 Migration
-
-- **Database Migration**: Auto update DB schema per version
-- **Setting Preservation**: Preserve existing settings and data
-- **Rollback Support**: Restore to previous version if issues occur
-
----
-
-## 📞 Support and Community
-
-### 💬 Support
-
-- **GitHub Issues**: Bug reports and feature requests
-- **Documentation**: Detailed online documentation
-- **FAQ**: Frequently asked questions
-
-### 🤝 Community
-
-- **GitHub Discussions**: Community discussions
-- **Contribution Guide**: Open source contribution methods
-- **Plugin Sharing**: Community plugins
-
----
-
-## 📄 License
-
-MicroBoard is distributed under the [MIT License](LICENSE).
-
----
-
-**MicroBoard v1.0.0** | [Documentation](https://mytajimilife-coder.github.io/microboard/) | [GitHub](https://github.com/mytajimilife-coder/microboard)
+**MicroBoard v1.0.0** - Made with ❤️

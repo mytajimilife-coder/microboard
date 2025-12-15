@@ -54,6 +54,30 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 - **Secure File Uploads:** Validates MIME types and randomizes filenames to prevent malicious execution.
 - **Policy Management:** Auto-generating "Terms of Service" and "Privacy Policy" in 4 languages.
 - **Two-Factor Authentication (2FA):** Email-based 2FA system for enhanced account security. Users can enable 2FA in their profile settings, and administrators can control 2FA availability through email settings.
+- **Advanced Permission System:** Granular control over board access with 10-tier level system for list, read, and write permissions.
+
+### 🔍 Advanced Search Capabilities
+
+- **Integrated Search:** Search across all boards simultaneously with keyword highlighting.
+- **Board-Specific Search:** Filter by title, content, or author within individual boards.
+- **Search Control:** Administrators can include/exclude specific boards from integrated search.
+- **Real-time Results:** Fast search with pagination and result count display.
+
+### ⚙️ Flexible Configuration
+
+- **Board-Level Settings:** 
+  - Permission control (list/read/write) with level-based access
+  - Editor toggle (WYSIWYG or plain text)
+  - Comment system enable/disable
+  - Search inclusion control
+- **SEO Optimization:**
+  - Bing Webmaster Tools integration
+  - Google Search Console verification
+  - Google Analytics (GA4) support
+  - Google Tag Manager integration
+  - Google AdSense configuration
+  - Custom header/footer scripts
+- **Theme Customization:** Background images, colors, dark mode, and custom logos/favicons.
 
 ### 🔐 Two-Factor Authentication (2FA)
 
@@ -123,15 +147,16 @@ add_event('after_write', function($post_data) {
 ```text
 microboard/
 ├── admin/                  # Admin Panel
-│   ├── board.php           # Board Management
+│   ├── board.php           # Board Management (with permissions)
 │   ├── config.php          # System Configuration
 │   ├── index.php           # Dashboard
 │   ├── oauth.php           # OAuth Settings
 │   ├── policy.php          # Policy Management
+│   ├── seo.php             # SEO & Analytics Settings
 │   └── users.php           # User Management
 ├── inc/                    # Core Includes
-│   ├── header.php          # Global Header
-│   ├── footer.php          # Global Footer
+│   ├── header.php          # Global Header (with SEO tags)
+│   ├── footer.php          # Global Footer (with custom scripts)
 │   └── oauth.php           # OAuth Helper Functions
 ├── lang/                   # Localization (en, ja, ko, zh)
 ├── plugin/                 # Plugin System
@@ -142,14 +167,19 @@ microboard/
 ├── config.php              # Global Configuration
 ├── install.php             # Installation Wizard
 ├── index.php               # Main Landing Page
-├── list.php                # Board List View
+├── list.php                # Board List View (with search)
 ├── view.php                # Post View
-├── write.php               # Post Creation/Edit
+├── write.php               # Post Creation/Edit (with editor toggle)
+├── search.php              # Integrated Search
 ├── login.php               # Login Page
 ├── register.php            # Registration Page
 ├── policy.php              # Terms & Privacy Policy
 ├── oauth_callback.php      # OAuth Callback Handler
-└── sitemap.php             # Sitemap Generator
+├── sitemap.php             # Sitemap Generator
+├── update_db_permissions.php  # Permission System DB Update
+├── update_db_editor.php    # Editor Settings DB Update
+├── update_db_search.php    # Search Settings DB Update
+└── update_db_seo.php       # SEO Settings DB Update
 ```
 
 ## 📖 Documentation & Guides
