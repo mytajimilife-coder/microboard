@@ -1,17 +1,20 @@
 <?php
+// 에러 리포팅 활성화 (디버깅용)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 
 // DB 설정 - 웹호스팅에서 수정하세요 (예: cPanel의 MySQL 정보)
 // DB 설정 - config_db.php 파일에서 로드
-$db_config_file = __DIR__ . '/config_db.php';
-if (file_exists($db_config_file)) {
-    require_once $db_config_file;
-} else {
-    define('DB_HOST', 'localhost');
-    define('DB_USER', 'root');
-    define('DB_PASS', '');
-    define('DB_NAME', 'microboard');
+$db_config_file = __DIR__ . '/data/config_db.php';
+
+if (!file_exists($db_config_file)) {
+    // 파일이 없으면 명확한 에러 출력 (root 계정 시도 방지)
+    die("<h1>Configuration Error</h1><p>The <code>config_db.php</code> file is missing.</p><p>Expected path: " . htmlspecialchars($db_config_file) . "</p><p>Please run <a href='install.php'>install.php</a> to create it.</p>");
 }
+
+require_once $db_config_file;
 
 // 버전 정보
 define('MICROBOARD_VERSION', '1.0.0');
@@ -55,11 +58,11 @@ function getDB() {
       // install.php 페이지에서는 리다이렉트하지 않도록 체크
       $current_page = basename($_SERVER['PHP_SELF']);
       if ($current_page !== 'install.php') {
-        if (file_exists('install.php')) {
-            header('Location: install.php');
-            exit;
-        }
-        die("<h1>DB Connection Error</h1><p>" . $e->getMessage() . "</p><p>Please check your database configuration. If the site is not installed, please upload install.php.</p>");
+        // if (file_exists('install.php')) {
+        //     header('Location: install.php');
+        //     exit;
+        // }
+        die("<h1>DB Error</h1><p>" . $e->getMessage() . "</p><p>Please check checks config_db.php or run install.php again.</p>");
       }
       // install.php에서 호출된 경우 예외 발생
       throw $e;

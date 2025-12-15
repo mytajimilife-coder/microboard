@@ -6,7 +6,7 @@ session_start();
 
 // DB 설정 상수 정의 (config.php 없이도 작동하도록)
 if (!defined('DB_HOST')) {
-    $db_config_file = __DIR__ . '/config_db.php';
+    $db_config_file = __DIR__ . '/data/config_db.php';
     if (file_exists($db_config_file)) {
         require_once $db_config_file;
     } else {
@@ -414,22 +414,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 }
                 
                 // config_db.php 파일 생성 (확실한 설정 저장)
+                // data 폴더에 생성 (권한 문제 회피)
+                $data_dir = __DIR__ . '/data';
+                if (!is_dir($data_dir)) {
+                    @mkdir($data_dir, 0777, true);
+                    @chmod($data_dir, 0777);
+                }
+
                 $db_config_content = "<?php
 define('DB_HOST', '{$db_host}');
 define('DB_USER', '{$db_user}');
 define('DB_PASS', '" . addslashes($db_pass) . "');
 define('DB_NAME', '{$db_name}');
 ";
-                $write_result = file_put_contents(__DIR__ . '/config_db.php', $db_config_content);
+                $write_result = file_put_contents($data_dir . '/config_db.php', $db_config_content);
                 
-                if ($write_result === false) {
-                    $error = "<strong>Failed to create config_db.php automatically.</strong><br><br>";
-                    $error .= "Please create a file named <code>config_db.php</code> in the root directory (where install.php is located) with the following content:<br>";
-                    $error .= "<textarea style='width:100%; height:150px; margin-top:10px; font-family:monospace; padding:10px; border:1px solid #ccc;' readonly onclick='this.select()'>" . htmlspecialchars($db_config_content) . "</textarea>";
-                    $error .= "<br><br>After creating the file, <a href='index.php'>click here to go to the main page</a>.";
-                } else {
-                    $success = $lang['installation_success'];
-                }
+                // 파일 생성 실패 여부와 상관없이 성공 메시지 표시 (사용자 요청)
+                // if ($write_result === false) { ... }
+                $success = $lang['installation_success'];
                 
             } catch (Exception $e) {
                 $error = $lang['db_conn_failed'] . ': ' . $e->getMessage();
