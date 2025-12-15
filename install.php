@@ -167,7 +167,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                         `cf_use_point` tinyint(1) NOT NULL DEFAULT 0,
                         `cf_write_point` int(11) NOT NULL DEFAULT 0,
                         `cf_language_mode` varchar(50) NOT NULL DEFAULT 'multilingual',
-                        `cf_default_language` varchar(50) NOT NULL DEFAULT 'en'
+                        `cf_default_language` varchar(50) NOT NULL DEFAULT 'en',
+                        `cf_site_title` varchar(255) NOT NULL DEFAULT 'MicroBoard'
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
                     
                     CREATE TABLE IF NOT EXISTS `mb1_point` (
@@ -226,8 +227,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 
                 // 기본 관리자 사용자 생성
                 $password_hash = password_hash($admin_password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO mb1_member (mb_id, mb_password, mb_level) VALUES (?, ?, 10)");
-                $stmt->execute([$admin_username, $password_hash]);
+                $stmt = $pdo->prepare("INSERT INTO mb1_member (mb_id, mb_password, mb_nickname, mb_email, mb_level) VALUES (?, ?, ?, ?, 10)");
+                $stmt->execute([$admin_username, $password_hash, $admin_username, 'admin@example.com']);
                 
                 // 기본 게시판 생성
                 $stmt = $pdo->prepare("INSERT INTO mb1_board_config (bo_table, bo_subject) VALUES ('free', ?)");
