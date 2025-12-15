@@ -123,12 +123,14 @@ MicroBoard now supports **Two-Factor Authentication** for enhanced account secur
 
    - Navigate to `http://your-domain.com/install.php`.
    - Follow the wizard to set up the database and admin account.
+   - The installer will automatically create `data/config_db.php` which stores your database credentials.
    - _(Optional)_ Delete `install.php` after success for security.
 
 4. **Post-Install Setup**
    - Go to `/admin` to configure OAuth keys and Point settings.
+   - If you encounter database issues, run `check_db_structure.php` to verify your DB schema.
 
-## � Plugin System
+## 🧩 Plugin System
 
 MicroBoard features a lightweight hook system similar to WordPress. You can create custom plugins in the `plugin/` directory.
 
@@ -154,6 +156,9 @@ microboard/
 │   ├── policy.php          # Policy Management
 │   ├── seo.php             # SEO & Analytics Settings
 │   └── users.php           # User Management
+├── data/                   # Data Storage (Created on Install)
+│   ├── config_db.php       # Database Configuration (Auto-generated)
+│   └── file/               # Uploaded Files
 ├── inc/                    # Core Includes
 │   ├── header.php          # Global Header (with SEO tags)
 │   ├── footer.php          # Global Footer (with custom scripts)
@@ -172,14 +177,14 @@ microboard/
 ├── write.php               # Post Creation/Edit (with editor toggle)
 ├── search.php              # Integrated Search
 ├── login.php               # Login Page
+├── logout.php              # Logout Handler
 ├── register.php            # Registration Page
 ├── policy.php              # Terms & Privacy Policy
 ├── oauth_callback.php      # OAuth Callback Handler
 ├── sitemap.php             # Sitemap Generator
-├── update_db_permissions.php  # Permission System DB Update
-├── update_db_editor.php    # Editor Settings DB Update
-├── update_db_search.php    # Search Settings DB Update
-└── update_db_seo.php       # SEO Settings DB Update
+├── check_db_structure.php  # Database Structure Verification
+├── update_db_*.php         # Database Update Scripts (Permissions, Editor, Search, SEO, etc.)
+└── robots.php              # Robots.txt Generator
 ```
 
 ## 📖 Documentation & Guides
