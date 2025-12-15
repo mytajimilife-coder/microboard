@@ -188,6 +188,7 @@ return [
     'default_skin' => '基本',
     'modern_skin' => 'モダン',
     'use_comment_label' => 'コメントを使用する',
+    'use_editor_label' => 'エディターを使用する',
     'config_management' => '環境設定',
     'point_settings' => 'ポイント設定',
     'use_point' => 'ポイント使用',

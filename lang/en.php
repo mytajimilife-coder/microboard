@@ -141,6 +141,7 @@ return [
     'default_skin' => 'Default',
     'modern_skin' => 'Modern',
     'use_comment_label' => 'Enable Comments',
+    'use_editor_label' => 'Use Editor',
     'config_management' => 'Configuration',
     'point_settings' => 'Point Settings',
     'use_point' => 'Use Points',

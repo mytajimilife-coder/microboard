@@ -8,7 +8,11 @@
         </div>
         <div class="form-group">
             <label for="content"><?php echo $lang['content']; ?></label>
+            <?php if ($use_editor ?? 1): ?>
             <textarea id="summernote" name="content"><?php echo $post['wr_content']; ?></textarea>
+            <?php else: ?>
+            <textarea id="content" name="content" rows="15" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius); font-family: inherit; font-size: 1rem; resize: vertical;" required><?php echo $post['wr_content']; ?></textarea>
+            <?php endif; ?>
         </div>
         
         <div class="form-group">

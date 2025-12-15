@@ -188,6 +188,7 @@ return [
     'default_skin' => '默认',
     'modern_skin' => '现代',
     'use_comment_label' => '启用评论',
+    'use_editor_label' => '使用编辑器',
     'config_management' => '环境设置',
     'point_settings' => '积分设置',
     'use_point' => '使用积分',

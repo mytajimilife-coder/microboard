@@ -133,6 +133,7 @@ return [
     'default_skin' => '기본',
     'modern_skin' => '모던',
     'use_comment_label' => '댓글 사용',
+    'use_editor_label' => '에디터 사용',
     'config_management' => '환경설정',
     'point_settings' => '포인트 설정',
     'use_point' => '포인트 사용',

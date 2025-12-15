@@ -97,20 +97,25 @@ if ($_POST) {
 <?php
 $page_title = $id ? $lang['edit'] : $lang['write_post'];
 require_once 'inc/header.php';
-?>
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-<?php
-// 스킨 설정
-$board_skin = 'default'; // 기본 스킨
+
+// 게시판 설정 가져오기
+$board_skin = 'default';
+$use_editor = 1; // 기본값: 에디터 사용
 if (!empty($_GET['bo_table'])) {
   $db = getDB();
-  $stmt = $db->prepare('SELECT bo_skin FROM mb1_board_config WHERE bo_table = ?');
+  $stmt = $db->prepare('SELECT bo_skin, bo_use_editor FROM mb1_board_config WHERE bo_table = ?');
   $stmt->execute([$_GET['bo_table']]);
   $config = $stmt->fetch();
   $board_skin = $config['bo_skin'] ?? 'default';
+  $use_editor = $config['bo_use_editor'] ?? 1;
 }
+?>
+<?php if ($use_editor): ?>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<?php endif; ?>
+<?php
 
 $skin_path = "skin/$board_skin/write.skin.php";
 if (file_exists($skin_path)) {
@@ -125,6 +130,7 @@ if (file_exists($skin_path)) {
   echo '<p>' . $lang['skin_not_found'] . '</p>';
 }
 ?>
+<?php if ($use_editor): ?>
 <script>
 $(document).ready(function() {
   $('#summernote').summernote({
@@ -186,4 +192,5 @@ $(document).ready(function() {
   });
 });
 </script>
+<?php endif; ?>
 <?php require_once 'inc/footer.php'; ?>

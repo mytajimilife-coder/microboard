@@ -29,6 +29,12 @@ try {
     if ($stmt->rowCount() == 0) {
         $db->exec("ALTER TABLE mb1_board_config ADD COLUMN bo_list_level TINYINT(4) NOT NULL DEFAULT 0");
     }
+    
+    // 에디터 사용 여부 컬럼 추가
+    $stmt = $db->query("SHOW COLUMNS FROM mb1_board_config LIKE 'bo_use_editor'");
+    if ($stmt->rowCount() == 0) {
+        $db->exec("ALTER TABLE mb1_board_config ADD COLUMN bo_use_editor TINYINT(1) NOT NULL DEFAULT 1");
+    }
 } catch (Exception $e) {
     // 오류 무시 (권한 문제 등)
 }
@@ -58,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['act']) && $_POST['act
     'bo_admin' => $_POST['bo_admin'],
     'bo_list_count' => (int)$_POST['bo_list_count'],
     'bo_use_comment' => isset($_POST['bo_use_comment']) ? 1 : 0,
+    'bo_use_editor' => isset($_POST['bo_use_editor']) ? 1 : 0,
     'bo_skin' => $_POST['bo_skin'] ?? 'default',
     'bo_plugins' => $bo_plugins,
     'bo_read_level' => (int)($_POST['bo_read_level'] ?? 1),
@@ -77,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['act']) && $_POST['act
     bo_admin = :bo_admin, 
     bo_list_count = :bo_list_count, 
     bo_use_comment = :bo_use_comment,
+    bo_use_editor = :bo_use_editor,
     bo_skin = :bo_skin,
     bo_plugins = :bo_plugins,
     bo_read_level = :bo_read_level,
@@ -382,10 +390,14 @@ if (is_dir($plugin_dir)) {
               <option value="modern" <?php echo ($board['bo_skin'] ?? 'default') === 'modern' ? 'selected' : ''; ?>><?php echo $lang['modern_skin']; ?></option>
             </select>
           </div>
-          <div class="form-group" style="display: flex; align-items: flex-end; padding-bottom: 0.75rem;">
+          <div class="form-group" style="display: flex; align-items: flex-end; padding-bottom: 0.75rem; gap: 2rem;">
             <label class="plugin-checkbox" style="margin-bottom: 0;">
               <input type="checkbox" name="bo_use_comment" <?php echo ($board['bo_use_comment'] ?? 0) ? 'checked' : ''; ?>>
               <?php echo $lang['use_comment_label']; ?>
+            </label>
+            <label class="plugin-checkbox" style="margin-bottom: 0;">
+              <input type="checkbox" name="bo_use_editor" <?php echo ($board['bo_use_editor'] ?? 1) ? 'checked' : ''; ?>>
+              <?php echo $lang['use_editor_label'] ?? '에디터 사용'; ?>
             </label>
           </div>
       </div>
