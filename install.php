@@ -420,9 +420,16 @@ define('DB_USER', '{$db_user}');
 define('DB_PASS', '" . addslashes($db_pass) . "');
 define('DB_NAME', '{$db_name}');
 ";
-                file_put_contents(__DIR__ . '/config_db.php', $db_config_content);
+                $write_result = file_put_contents(__DIR__ . '/config_db.php', $db_config_content);
                 
-                $success = $lang['installation_success'];
+                if ($write_result === false) {
+                    $error = "<strong>Failed to create config_db.php automatically.</strong><br><br>";
+                    $error .= "Please create a file named <code>config_db.php</code> in the root directory (where install.php is located) with the following content:<br>";
+                    $error .= "<textarea style='width:100%; height:150px; margin-top:10px; font-family:monospace; padding:10px; border:1px solid #ccc;' readonly onclick='this.select()'>" . htmlspecialchars($db_config_content) . "</textarea>";
+                    $error .= "<br><br>After creating the file, <a href='index.php'>click here to go to the main page</a>.";
+                } else {
+                    $success = $lang['installation_success'];
+                }
                 
             } catch (Exception $e) {
                 $error = $lang['db_conn_failed'] . ': ' . $e->getMessage();
