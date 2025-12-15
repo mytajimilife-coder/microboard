@@ -1,20 +1,23 @@
 <?php
-// 에러 리포팅 활성화 (디버깅용)
+// 에러 리포팅 활성화 (디버깅 모드)
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 session_start();
 
-// DB 설정 - 웹호스팅에서 수정하세요 (예: cPanel의 MySQL 정보)
+// 디버깅 메시지: 시작
+echo "<!-- Config Start -->";
+
 // DB 설정 - config_db.php 파일에서 로드
 $db_config_file = __DIR__ . '/data/config_db.php';
 
 if (!file_exists($db_config_file)) {
-    // 파일이 없으면 명확한 에러 출력 (root 계정 시도 방지)
-    die("<h1>Configuration Error</h1><p>The <code>config_db.php</code> file is missing.</p><p>Expected path: " . htmlspecialchars($db_config_file) . "</p><p>Please run <a href='install.php'>install.php</a> to create it.</p>");
+    die("<h1>Configuration Error</h1><p>The <code>config_db.php</code> file is missing at: " . htmlspecialchars($db_config_file) . "</p>");
 }
 
+// 파일 로드 시도
 require_once $db_config_file;
+echo "<!-- DB Config Loaded -->";
 
 // 버전 정보
 define('MICROBOARD_VERSION', '1.0.0');
@@ -1014,6 +1017,11 @@ function run_event($event_name, ...$args) {
             }
         }
     }
+}
+
+// apply_hooks는 run_event의 별칭 (호환성 유지)
+function apply_hooks($event_name, ...$args) {
+    return run_event($event_name, ...$args);
 }
 
 // 스킨 설정
