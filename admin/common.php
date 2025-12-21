@@ -3,6 +3,7 @@ if (!defined('IN_ADMIN')) die();
 
 require_once '../config.php';
 requireAdmin();
+require_once '../check_db_pages.php';
 
 // 설정 가져오기
 $config = get_config();
@@ -261,6 +262,9 @@ body {
             </a>
             <a href="config.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'config.php' ? 'active' : ''; ?>">
                 ⚙️ <?php echo $lang['config_management']; ?>
+            </a>
+            <a href="pages.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'pages.php' ? 'active' : ''; ?>">
+                📄 <?php echo $lang['page_management'] ?? '페이지 관리'; ?>
             </a>
             <a href="oauth.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'oauth.php' ? 'active' : ''; ?>">
                 🔑 <?php echo $lang['oauth_settings']; ?>

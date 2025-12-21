@@ -1063,4 +1063,50 @@ if (!$skip_db_check) {
         exit;
     }
 }
-?>
+
+// CSRF 토큰 생성 및 검증 함수
+if (empty($_SESSION['csrf_token'])) {
+    if (function_exists('random_bytes')) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    } else {
+        $_SESSION['csrf_token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+
+// 변수 치환 함수
+function replace_variables($content, $extras = []) {
+    $config = get_config();
+    $replacements = [
+        '{{site_title}}' => htmlspecialchars($config['cf_site_title'] ?? 'MicroBoard'),
+        '{{copyright}}' => htmlspecialchars($config['cf_copyright'] ?? ''),
+        '{{version}}' => MICROBOARD_VERSION,
+        '{{year}}' => date('Y'),
+        '{{username}}' => htmlspecialchars($_SESSION['user'] ?? 'Guest'),
+        '{{nickname}}' => htmlspecialchars($_SESSION['nickname'] ?? 'Guest'),
+    ];
+
+    // 커스텀 변수 로드
+    try {
+        $db = getDB();
+        // 테이블 존재 여부 확인 (설치 초기 등 에러 방지)
+        // 성능을 위해 매번 확인하기보단 try-catch로 감싸는 것이 나음
+        $stmt = $db->query("SELECT va_key, va_value FROM mb1_variables");
+        while ($row = $stmt->fetch()) {
+            // 커스텀 변수 값은 HTML 허용 여부에 따라 처리 필요. 
+            // 여기서는 관리자가 설정한 값이므로 기본적으로 허용하되, XSS 위험은 관리자가 인지해야 함.
+            // 필요시 clean_xss 사용: $row['va_value'] = clean_xss($row['va_value']);
+            $replacements['{{' . $row['va_key'] . '}}'] = $row['va_value'];
+        }
+    } catch (Exception $e) {
+        // 테이블이 없거나 에러 발생 시 무시 (기본 변수만 사용)
+    }
+
+    // 추가 변수 병합
+    if (!empty($extras)) {
+        foreach ($extras as $key => $value) {
+            $replacements['{{' . $key . '}}'] = $value;
+        }
+    }
+
+    return str_replace(array_keys($replacements), array_values($replacements), $content);
+}

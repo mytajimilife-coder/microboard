@@ -63,6 +63,28 @@ In Admin Page → Board Management, you can configure the following:
 
 ---
 
+## Page Management
+
+MicroBoard allows you to create and manage static pages (About, Terms, etc.) directly.
+
+### Key Features
+- **Create Page**: Set title, content, and URL Slug in admin panel
+- **Permission Settings**: Set read permission level per page (Guests, Members, etc.)
+- **Variables**: Use `{{variable_name}}` for dynamic data insertion in page content
+- **URL Access**: Access via `page.php?id=slug`
+
+### Custom Variables
+- Define your own variables in the admin settings page.
+- **Example**: Create `{{twitter_url}}` variable with a link value, and it will be automatically replaced with that link whenever `{{twitter_url}}` is entered in posts or pages.
+- **Default Variables**:
+  - `{{site_title}}`: Site Title
+  - `{{copyright}}`: Copyright Text
+  - `{{username}}`: Current User ID
+  - `{{nickname}}`: Current User Nickname
+  - `{{year}}`: Current Year
+
+---
+
 ## Permission System
 
 ### Member Level System

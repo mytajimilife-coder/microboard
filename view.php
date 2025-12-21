@@ -78,7 +78,7 @@ incrementView($bo_table, $id);
 $post_view = [
   'wr_id' => $post['wr_id'],
   'wr_subject' => htmlspecialchars($post['wr_subject'], ENT_QUOTES, 'UTF-8'),
-  'wr_content' => clean_xss($post['wr_content']), 
+  'wr_content' => replace_variables(clean_xss($post['wr_content'])), 
   'wr_name' => htmlspecialchars($post['wr_name'], ENT_QUOTES, 'UTF-8'),
   'wr_datetime' => $post['wr_datetime'],
   'wr_hit' => $post['wr_hit']

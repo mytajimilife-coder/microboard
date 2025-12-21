@@ -7,7 +7,14 @@
                 <span style="color: #999;">|</span>
                 <a href="policy.php?type=privacy" style="color: #666; text-decoration: none; margin: 0 10px;"><?php echo $lang['privacy_policy'] ?? '개인정보 보호정책'; ?></a>
             </div>
-            <p style="text-align: center; color: #999; margin: 0;">&copy; <?php echo date('Y'); ?> MicroBoard v<?php echo MICROBOARD_VERSION; ?>. <?php echo $lang['all_rights_reserved'] ?? 'All rights reserved.'; ?></p>
+            <?php
+            $config = get_config();
+            $copyright = $config['cf_copyright'] ?? '';
+            if (empty($copyright)) {
+                $copyright = "MicroBoard v" . MICROBOARD_VERSION . ". " . ($lang['all_rights_reserved'] ?? 'All rights reserved.');
+            }
+            ?>
+            <p style="text-align: center; color: #999; margin: 0;">&copy; <?php echo date('Y'); ?> <?php echo $copyright; ?></p>
         </div>
     </footer>
     

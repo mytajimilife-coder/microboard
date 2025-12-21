@@ -36,7 +36,15 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 - **Auto-Detection:** Automatically detects user browser language.
 - **Instant Switching:** Seamless language toggling without page reloads.
 
+### 📄 Page Management & Custom Variables
+
+- **Static Page Builder:** Create and manage pages (About Us, Terms, etc.) directly from the admin panel with URL slugs.
+- **Custom Variables:** Define site-wide variables (e.g., `{{twitter_url}}`) to dynamically replace content in posts and pages.
+- **Dynamic Content:** Use variables like `{{site_title}}`, `{{username}}`, and `{{year}}` anywhere.
+- **Access Control:** Set specific view permissions (Level 0-10) for each custom page.
+
 ### 👥 Community Engagement
+
 
 - **Point System:** Reward users for posting, commenting, and logging in. Configurable levels and ranks.
 - **Member Levels:** 10-tier ranking system with automatic promotion capabilities.

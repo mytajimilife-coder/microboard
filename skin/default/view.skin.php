@@ -369,16 +369,16 @@
 
 <div class="post-view">
     <div class="post-header">
-        <h2><?php echo $post['wr_subject']; ?></h2>
+        <h2><?php echo $post_view['wr_subject']; ?></h2>
         <div class="post-meta">
-            <span class="writer"><?php echo $post['wr_name']; ?></span>
+            <span class="writer"><?php echo $post_view['wr_name']; ?></span>
             <span class="date"><?php echo $post['wr_datetime']; ?></span>
             <span class="hit"><?php echo $lang['hit']; ?> <?php echo $post['wr_hit']; ?></span>
         </div>
     </div>
 
     <div class="post-content">
-        <?php echo $post['wr_content']; ?>
+        <?php echo $post_view['wr_content']; ?>
     </div>
 
     <!-- 첨부파일 -->
