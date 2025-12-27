@@ -1,40 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- English (Default) -->
   <url>
     <loc>https://mytajimilife-coder.github.io/microboard/</loc>
-    <lastmod>2025-12-12</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mytajimilife-coder.github.io/microboard/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
     <xhtml:link rel="alternate" hreflang="ko" href="https://mytajimilife-coder.github.io/microboard/index-ko.html"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://mytajimilife-coder.github.io/microboard/index-ja.html"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://mytajimilife-coder.github.io/microboard/index-zh.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
   </url>
+  
+  <!-- Korean -->
   <url>
     <loc>https://mytajimilife-coder.github.io/microboard/index-ko.html</loc>
-    <lastmod>2025-12-12</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mytajimilife-coder.github.io/microboard/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://mytajimilife-coder.github.io/microboard/index-ko.html"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://mytajimilife-coder.github.io/microboard/index-ja.html"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://mytajimilife-coder.github.io/microboard/index-zh.html"/>
   </url>
+  
+  <!-- Japanese -->
   <url>
     <loc>https://mytajimilife-coder.github.io/microboard/index-ja.html</loc>
-    <lastmod>2025-12-12</lastmod>
+    <lastmod>2025-12-28</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
-    <xhtml:link rel="alternate" hreflang="ko" href="https://mytajimilife-coder.github.io/microboard/index-ko.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://mytajimilife-coder.github.io/microboard/index-zh.html"/>
-  </url>
-  <url>
-    <loc>https://mytajimilife-coder.github.io/microboard/index-zh.html</loc>
-    <lastmod>2025-12-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mytajimilife-coder.github.io/microboard/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
     <xhtml:link rel="alternate" hreflang="ko" href="https://mytajimilife-coder.github.io/microboard/index-ko.html"/>
     <xhtml:link rel="alternate" hreflang="ja" href="https://mytajimilife-coder.github.io/microboard/index-ja.html"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://mytajimilife-coder.github.io/microboard/index-zh.html"/>
   </url>
+  
+  <!-- Chinese -->
+  <url>
+    <loc>https://mytajimilife-coder.github.io/microboard/index-zh.html</loc>
+    <lastmod>2025-12-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mytajimilife-coder.github.io/microboard/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mytajimilife-coder.github.io/microboard/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://mytajimilife-coder.github.io/microboard/index-ko.html"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://mytajimilife-coder.github.io/microboard/index-ja.html"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://mytajimilife-coder.github.io/microboard/index-zh.html"/>
+  </url>
+  
 </urlset>
