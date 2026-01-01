@@ -465,5 +465,55 @@ return [
     'period_1year' => '1年',
     'no_stats_data' => '没有统计数据。',
     'visits_per_page' => '每次访问的页面数',
+
+    // 新功能: 备份/恢复
+    'backup_restore' => '备份与恢复',
+    'backup_description' => '创建当前数据库的完整备份。',
+    'restore_description' => '从备份文件恢复。警告：所有当前数据将被删除！',
+    'backup_success' => '备份创建成功',
+    'backup_failed' => '备份失败',
+    'restore_success' => '恢复成功',
+    'restore_failed' => '恢复失败',
+    'no_backups' => '未找到备份文件。',
+    'filename' => '文件名',
+    'size' => '大小',
+    'actions' => '操作',
+    'delete_success' => '删除成功',
+    'latest_backup' => '最后备份',
+
+    // 管理日志
+    'admin_logs' => '管理员活动日志',
+    'total_logs' => '总日志数',
+    'user' => '用户',
+    'detail' => '详细信息',
+    'no_logs' => '未找到相关日志。',
+
+    // 文件管理
+    'file_manager' => '文件管理',
+    'total_files' => '总文件数',
+    'total_size' => '存储空间使用',
+    'avg_file_size' => '平均文件大小',
+    'scan_files' => '扫描文件',
+    'cleanup_orphaned' => '清理孤立记录',
+    'file_list' => '文件列表',
+
+    // 通知
+    'notifications' => '通知',
+    'all' => '全部',
+    'unread' => '未读',
+    'mark_all_read' => '全部标记为已读',
+    'no_notifications' => '没有新通知。',
+
+    // 运营设置
+    'maintenance_mode' => '维护模式',
+    'bad_words_filtering' => '违禁词过滤',
+    'auto_level_up' => '自动升级',
+    'point_management' => '积分管理',
+    'login_log' => '登录记录',
+    'adjust_point' => '调整积分',
+    'reason' => '原因',
+    'ip_ban_management' => 'IP封禁管理',
+    'notice_management' => '公告管理',
+    'all_features' => '全部功能',
 ];
 ?>

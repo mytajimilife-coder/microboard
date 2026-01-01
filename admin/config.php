@@ -50,18 +50,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
             // 커스텀 변수 저장
             $db->exec("DELETE FROM mb1_variables"); // 기존 변수 초기화
-            if (isset($_POST['var_key']) && is_array($_POST['var_key'])) {
-                $stmt_var = $db->prepare("INSERT INTO mb1_variables (va_key, va_value) VALUES (?, ?)");
-                foreach ($_POST['var_key'] as $index => $key) {
-                    $key = trim($key);
-                    $val = $_POST['var_val'][$index] ?? '';
-                    if (!empty($key)) {
-                        $stmt_var->execute([$key, $val]);
-                    }
+        if (isset($_POST['var_key']) && is_array($_POST['var_key'])) {
+            $stmt_var = $db->prepare("INSERT INTO mb1_variables (va_key, va_value) VALUES (?, ?)");
+            foreach ($_POST['var_key'] as $index => $key) {
+                $key = trim($key);
+                $val = $_POST['var_val'][$index] ?? '';
+                if (!empty($key)) {
+                    $stmt_var->execute([$key, $val]);
                 }
             }
+        }
 
-            $success = $lang['settings_saved'] ?? 'Settings have been saved successfully.';
+        // 새 설정 업데이트
+        $stmt = $db->prepare("UPDATE mb1_config SET 
+            cf_maintenance_mode = ?, 
+            cf_maintenance_text = ?, 
+            cf_bad_words = ?, 
+            cf_auto_level_up = ?, 
+            cf_level_up_gap = ?,
+            cf_login_attempts_limit = ?,
+            cf_login_lockout_time = ?,
+            cf_admin_ip_whitelist = ?,
+            cf_use_security_headers = ?");
+        $stmt->execute([
+            isset($_POST['maintenance_mode']) ? 1 : 0,
+            $_POST['maintenance_text'] ?? '',
+            $_POST['bad_words'] ?? '',
+            isset($_POST['auto_level_up']) ? 1 : 0,
+            intval($_POST['level_up_gap'] ?? 100),
+            intval($_POST['login_attempts_limit'] ?? 5),
+            intval($_POST['login_lockout_time'] ?? 10),
+            $_POST['admin_ip_whitelist'] ?? '',
+            isset($_POST['use_security_headers']) ? 1 : 0
+        ]);
+
+        $success = $lang['settings_saved'] ?? 'Settings have been saved successfully.';
         } catch (Exception $e) {
             $error = $lang['error_occurred'] ?? 'An error occurred while saving settings.' . $e->getMessage();
         }
@@ -222,6 +245,71 @@ if (empty($_SESSION['csrf_token'])) {
                 <small style="display: block; margin-top: 0.375rem; color: var(--text-light); font-size: 0.8rem;">
                     <?php echo $lang['default_language_help'] ?? 'Select the default language for your site.'; ?>
                 </small>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color); margin-top: 1.5rem;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: #ef4444; font-size: 1.1rem;">
+                🛡️ 보안 정책 설정
+            </h3>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">무차별 대입 공격 방어 (로그인 잠금)</label>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="number" name="login_attempts_limit" value="<?php echo intval($config['cf_login_attempts_limit'] ?? 5); ?>" style="width: 70px; padding: 0.4rem;">
+                    <span>회 실패 시</span>
+                    <input type="number" name="login_lockout_time" value="<?php echo intval($config['cf_login_lockout_time'] ?? 10); ?>" style="width: 70px; padding: 0.4rem;">
+                    <span>분간 로그인 차단</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">관리자 접근 IP 화이트리스트</label>
+                <textarea name="admin_ip_whitelist" placeholder="허용할 IP를 쉼표(,)로 구분 (공백 시 모든 IP 허용)" 
+                    style="width: 100%; height: 60px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius); background: var(--bg-color);"><?php echo htmlspecialchars($config['cf_admin_ip_whitelist'] ?? ''); ?></textarea>
+                <small style="color: var(--text-light);">현재 접속 IP: <strong><?php echo $_SERVER['REMOTE_ADDR']; ?></strong> (잘못 입력 시 접근이 차단될 수 있으니 주의하세요!)</small>
+            </div>
+
+            <div style="margin-bottom: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer;">
+                    <input type="checkbox" name="use_security_headers" <?php echo ($config['cf_use_security_headers'] ?? 1) ? 'checked' : ''; ?>>
+                    보안 헤더 강제 적용 (HSTS, CSP, X-Frame-Options 등)
+                </label>
+                <small style="display: block; color: var(--text-light); margin-left: 1.6rem;">클릭재킹 및 다양한 웹 취약점 공격을 시스템 수준에서 방어합니다.</small>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: var(--radius); border: 1px solid var(--border-color); margin-top: 1.5rem;">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; color: var(--secondary-color); font-size: 1.1rem;">
+                🚀 서비스 운영 설정
+            </h3>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer;">
+                    <input type="checkbox" name="maintenance_mode" <?php echo ($config['cf_maintenance_mode'] ?? 0) ? 'checked' : ''; ?>>
+                    서비스 점검 모드 활성화
+                </label>
+                <textarea name="maintenance_text" placeholder="점검 중 메시지를 입력하세요" 
+                    style="width: 100%; height: 80px; margin-top: 0.5rem; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius); background: var(--bg-color);"><?php echo htmlspecialchars($config['cf_maintenance_text'] ?? '현재 서비스 점검 중입니다. 잠시 후 다시 이용해주세요.'); ?></textarea>
+            </div>
+
+            <div style="margin-bottom: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; cursor: pointer;">
+                    <input type="checkbox" name="auto_level_up" <?php echo ($config['cf_auto_level_up'] ?? 0) ? 'checked' : ''; ?>>
+                    포인트 수치 기준 자동 레벨업 활성화
+                </label>
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                    <input type="number" name="level_up_gap" value="<?php echo intval($config['cf_level_up_gap'] ?? 100); ?>" 
+                        style="width: 100px; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: var(--radius); background: var(--bg-color);">
+                    <span>포인트당 1레벨업</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <label style="display: block; font-weight: 600; margin-bottom: 0.5rem;">금지어 필터링</label>
+                <textarea name="bad_words" placeholder="쉼표(,)로 구분하여 입력 (예: 바보,멍청이)" 
+                    style="width: 100%; height: 100px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius); background: var(--bg-color);"><?php echo htmlspecialchars($config['cf_bad_words'] ?? ''); ?></textarea>
+                <small style="color: var(--text-light);">입력된 단어는 게시글 및 댓글에서 '***'로 필터링됩니다.</small>
             </div>
         </div>
 

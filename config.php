@@ -1119,5 +1119,168 @@ function replace_variables($content, $extras = []) {
         }
     }
 
+// 금지어 필터링 함수
+function filter_content($content) {
+    if (empty($content)) return $content;
+    
+    $config = get_config();
+    if (empty($config['cf_bad_words'])) return $content;
+    
+    $bad_words = explode(',', $config['cf_bad_words']);
+    foreach ($bad_words as $word) {
+        $word = trim($word);
+        if (empty($word)) continue;
+        $content = str_replace($word, str_repeat('*', mb_strlen($word)), $content);
+    }
+    
+    return $content;
+}
+
+// 서비스 점검 모드 확인
+function check_maintenance() {
+    // 관리자 페이지 제외
+    if (defined('IN_ADMIN')) return;
+    
+    // index.php, login.php 등 필수 페이지 제외 여부 결정 (여기서는 모든 일반 페이지 차단)
+    $current_page = basename($_SERVER['PHP_SELF']);
+    if ($current_page === 'login.php' || $current_page === 'logout.php') return;
+
+    $config = get_config();
+    if (isset($config['cf_maintenance_mode']) && $config['cf_maintenance_mode'] == 1) {
+        // 관리자는 접근 허용
+        if (isAdmin()) return;
+        
+        $msg = $config['cf_maintenance_text'] ?: '현재 서비스 점검 중입니다.';
+        die("
+            <div style='display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; background:#f3f4f6;'>
+                <div style='text-align:center; padding:3rem; background:white; border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.1); max-width:500px;'>
+                    <div style='font-size:4rem; margin-bottom:1rem;'>🛠️</div>
+                    <h1 style='color:#1f2937; margin-bottom:1rem;'>Service Maintenance</h1>
+                    <p style='color:#4b5563; line-height:1.6; font-size:1.1rem;'>" . nl2br(htmlspecialchars($msg)) . "</p>
+                    <div style='margin-top:2rem; font-size:0.9rem; color:#9ca3af;'>관리자라면 <a href='/admin/login.php' style='color:#3b82f6;'>여기</a>로 로그인하세요.</div>
+                </div>
+            </div>
+        ");
+    }
+}
+
+// 자동 레벨업 체크
+function check_auto_level_up($mb_id) {
+    $config = get_config();
+    if (empty($config['cf_auto_level_up'])) return;
+    
+    $db = getDB();
+    $stmt = $db->prepare("SELECT mb_level, mb_point FROM mb1_member WHERE mb_id = ?");
+    $stmt->execute([$mb_id]);
+    $user = $stmt->fetch();
+    
+    if (!$user) return;
+    
+    $current_level = intval($user['mb_level']);
+    $points = intval($user['mb_point']);
+    $gap = intval($config['cf_level_up_gap'] ?: 100);
+    
+    // 계산식: 1 + (포인트 / gap) -> 예: 250포인트면 1 + 2 = 3레벨
+    $new_level = 1 + floor($points / $gap);
+    if ($new_level > 9) $new_level = 9; // 관리자(10) 제외 최대 9레벨
+    
+    if ($new_level > $current_level) {
+        updateMemberLevel($mb_id, $new_level);
+        create_notification($mb_id, 'system', "축하합니다! 레벨이 {$new_level}(으)로 상승했습니다. 🎉");
+    }
+}
+
+// 보안 헤더 전송 함수
+function send_security_headers() {
+    $config = get_config();
+    if (empty($config['cf_use_security_headers'])) return;
+
+    // 클릭재킹 방지
+    header('X-Frame-Options: SAMEORIGIN');
+    // XSS 필터 강제 적용 (브라우저 지원 중단 추세지만 여전히 유용)
+    header('X-XSS-Protection: 1; mode=block');
+    // MIME 스니핑 방지
+    header('X-Content-Type-Options: nosniff');
+    // 리퍼러 정책
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    // HTTPS 강제 (HSTS)
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+    }
+}
+
+// 관리자 IP 화이트리스트 체크 함수
+function check_admin_ip_whitelist() {
+    if (!defined('IN_ADMIN')) return;
+    
+    $config = get_config();
+    if (empty($config['cf_admin_ip_whitelist'])) return;
+
+    $user_ip = $_SERVER['REMOTE_ADDR'];
+    $allowed_ips = explode(',', $config['cf_admin_ip_whitelist']);
+    $is_allowed = false;
+
+    foreach ($allowed_ips as $ip) {
+        if (trim($ip) === $user_ip) {
+            $is_allowed = true;
+            break;
+        }
+    }
+
+    if (!$is_allowed) {
+        log_admin_action('unauthorized_access', "Unauthorized IP: $user_ip");
+        die("<div style='padding:2rem; background:#fee2e2; color:#b91c1c; border-radius:10px; margin:2rem; text-align:center;'>
+            <h1>접근 권한 없음 (IP Restricted)</h1>
+            <p>현재 허용되지 않은 IP($user_ip)에서 관리자 페이지에 접근하려고 하였습니다.</p>
+        </div>");
+    }
+}
+
+// 초기화 시 보안 루틴 실행
+send_security_headers();
+check_admin_ip_whitelist();
+check_maintenance();
+
     return str_replace(array_keys($replacements), array_values($replacements), $content);
+}
+
+// 알림 생성 함수
+function create_notification($mb_id, $type, $content, $link = null) {
+    if (empty($mb_id)) return false;
+    
+    $db = getDB();
+    try {
+        $stmt = $db->prepare("INSERT INTO mb1_notifications (mb_id, noti_type, noti_content, noti_link) VALUES (?, ?, ?, ?)");
+        return $stmt->execute([$mb_id, $type, $content, $link]);
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+// 읽지 않은 알림 개수 조회
+function get_unread_notification_count($mb_id) {
+    if (empty($mb_id)) return 0;
+    
+    $db = getDB();
+    try {
+        $stmt = $db->prepare("SELECT COUNT(*) FROM mb1_notifications WHERE mb_id = ? AND is_read = 0");
+        $stmt->execute([$mb_id]);
+        return $stmt->fetchColumn();
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+// 최근 알림 조회
+function get_recent_notifications($mb_id, $limit = 5) {
+    if (empty($mb_id)) return [];
+    
+    $db = getDB();
+    try {
+        $stmt = $db->prepare("SELECT * FROM mb1_notifications WHERE mb_id = ? ORDER BY created_at DESC LIMIT ?");
+        $stmt->execute([$mb_id, $limit]);
+        return $stmt->fetchAll();
+    } catch (Exception $e) {
+        return [];
+    }
 }

@@ -272,6 +272,39 @@ body {
             <a href="policy.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'policy.php' ? 'active' : ''; ?>">
                 📜 <?php echo $lang['policy_management']; ?>
             </a>
+            <a href="notice.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'notice.php' ? 'active' : ''; ?>">
+                📢 <?php echo $lang['notice_management'] ?? '공지사항 관리'; ?>
+            </a>
+            <a href="reports.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'reports.php' ? 'active' : ''; ?>">
+                🚨 <?php echo $lang['report_management'] ?? '신고 관리'; ?>
+            </a>
+            <a href="visit_stats.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'visit_stats.php' ? 'active' : ''; ?>">
+                📊 <?php echo $lang['visit_statistics'] ?? '방문 통계'; ?>
+            </a>
+            <a href="ip_ban.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'ip_ban.php' ? 'active' : ''; ?>">
+                🚫 <?php echo $lang['ip_ban_management'] ?? 'IP 차단 관리'; ?>
+            </a>
+            <a href="email_settings.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'email_settings.php' ? 'active' : ''; ?>">
+                📧 <?php echo $lang['email_settings'] ?? '이메일 설정'; ?>
+            </a>
+            <a href="seo.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'seo.php' ? 'active' : ''; ?>">
+                🔍 <?php echo $lang['seo_settings'] ?? 'SEO 설정'; ?>
+            </a>
+            <a href="theme_settings.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'theme_settings.php' ? 'active' : ''; ?>">
+                🎨 <?php echo $lang['theme_settings'] ?? '테마 설정'; ?>
+            </a>
+            <a href="file_manager.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'file_manager.php' ? 'active' : ''; ?>">
+                📁 <?php echo $lang['file_manager'] ?? '파일 관리'; ?>
+            </a>
+            <a href="points.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'points.php' ? 'active' : ''; ?>">
+                💰 <?php echo $lang['point_management'] ?? '포인트 관리'; ?>
+            </a>
+            <a href="logs.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'logs.php' ? 'active' : ''; ?>">
+                📋 <?php echo $lang['admin_logs'] ?? '관리자 로그'; ?>
+            </a>
+            <a href="backup.php" class="nav-item <?php echo basename($_SERVER['PHP_SELF']) == 'backup.php' ? 'active' : ''; ?>">
+                💾 <?php echo $lang['backup_restore'] ?? '백업/복원'; ?>
+            </a>
             <div style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 1rem;">
                 <a href="../user/mypage.php" class="nav-item">
                     👤 <?php echo $lang['mypage']; ?>

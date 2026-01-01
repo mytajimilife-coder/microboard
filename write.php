@@ -38,8 +38,8 @@ if ($_POST) {
       die('CSRF token validation failed');
   }
 
-  $title = trim($_POST['title']);
-  $content = $_POST['content'];  // HTML 보존, trim 제거
+  $title = filter_content(trim($_POST['title']));
+  $content = filter_content($_POST['content']);  // HTML 보존, 필터링 적용
   if ($title && $content) {
     $data = [
       'title' => $title,
@@ -63,6 +63,9 @@ if ($_POST) {
           $wr_id, 
           'write'
         );
+        
+        // 자동 승급 체크
+        check_auto_level_up($_SESSION['user']);
       }
     }
 

@@ -465,5 +465,55 @@ return [
     'period_1year' => '1年間',
     'no_stats_data' => '統計データがありません。',
     'visits_per_page' => '訪問あたりのページ数',
+
+    // 新規機能: バックアップ/復元
+    'backup_restore' => 'バックアップと復元',
+    'backup_description' => '現在のデータベースのフルバックアップを作成します。',
+    'restore_description' => 'バックアップファイルから復元します。注意：現在のすべてのデータが削除されます！',
+    'backup_success' => 'バックアップが作成されました。',
+    'backup_failed' => 'バックアップに失敗しました。',
+    'restore_success' => '復元が完了しました。',
+    'restore_failed' => '復元に失敗しました。',
+    'no_backups' => 'バックアップファイルが見つかりません。',
+    'filename' => 'ファイル名',
+    'size' => 'サイズ',
+    'actions' => '操作',
+    'delete_success' => '削除されました。',
+    'latest_backup' => '最新のバックアップ',
+
+    // 管理者ログ
+    'admin_logs' => '管理者活動ログ',
+    'total_logs' => '総ログ数',
+    'user' => 'ユーザー',
+    'detail' => '詳細',
+    'no_logs' => 'ログが見つかりません。',
+
+    // ファイル管理
+    'file_manager' => 'ファイル管理',
+    'total_files' => '総ファイル数',
+    'total_size' => '使用中ストレージ',
+    'avg_file_size' => '平均ファイルサイズ',
+    'scan_files' => 'ファイルをスキャン',
+    'cleanup_orphaned' => '孤立したデータの整理',
+    'file_list' => 'ファイルリスト',
+
+    // 通知
+    'notifications' => '通知',
+    'all' => 'すべて',
+    'unread' => '未読',
+    'mark_all_read' => 'すべて既読にする',
+    'no_notifications' => '通知はありません。',
+
+    // 運営設定
+    'maintenance_mode' => 'メンテナンスモード',
+    'bad_words_filtering' => 'NGワードフィルター',
+    'auto_level_up' => '自動レベルアップ',
+    'point_management' => 'ポイント管理',
+    'login_log' => 'ログイン履歴',
+    'adjust_point' => 'ポイント調整',
+    'reason' => '理由',
+    'ip_ban_management' => 'IP禁止管理',
+    'notice_management' => 'お知らせ管理',
+    'all_features' => 'すべての機能',
 ];
 ?>

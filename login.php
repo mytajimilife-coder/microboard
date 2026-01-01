@@ -55,10 +55,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       } elseif (empty($username) || empty($password)) {
         $error = $lang['login_input_required'];
       } else {
-        // 차단 및 탈퇴 확인을 포함한 인증
-        $result = verifyUserWithBlock($username, $password);
+        // 무차별 대입 공격(Brute Force) 방어
+        $config = get_config();
+        $limit = intval($config['cf_login_attempts_limit'] ?: 5);
+        $lockout_min = intval($config['cf_login_lockout_time'] ?: 10);
+        $user_ip = $_SERVER['REMOTE_ADDR'];
+        
+        $db = getDB();
+        $stmt_check = $db->prepare("SELECT COUNT(*) FROM mb1_login_log 
+                                    WHERE lo_ip = ? AND lo_success = 0 
+                                    AND lo_datetime > DATE_SUB(NOW(), INTERVAL ? MINUTE)");
+        $stmt_check->execute([$user_ip, $lockout_min]);
+        $failed_count = $stmt_check->fetchColumn();
+        
+        if ($failed_count >= $limit) {
+          $error = sprintf($lang['login_locked'] ?? '로그인 시도가 너무 많습니다. %d분 후에 다시 시도해주세요.', $lockout_min);
+        } else {
+          // 차단 및 탈퇴 확인을 포함한 인증
+          $result = verifyUserWithBlock($username, $password);
 
         if ($result['success']) {
+          // 로그인 기록 (성공)
+          $db = getDB();
+          $stmt_log = $db->prepare("INSERT INTO mb1_login_log (mb_id, lo_ip, lo_ua, lo_success) VALUES (?, ?, ?, 1)");
+          $stmt_log->execute([$username, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']]);
+
           // 2FA가 활성화되어 있는지 확인
           if (isTwoFactorEnabled($username)) {
             // 2FA 코드 입력 페이지로 리다이렉트
@@ -75,6 +96,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
           }
         } else {
+          // 로그인 기록 (실패)
+          $db = getDB();
+          $stmt_log = $db->prepare("INSERT INTO mb1_login_log (mb_id, lo_ip, lo_ua, lo_success) VALUES (?, ?, ?, 0)");
+          $stmt_log->execute([$username, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']]);
+
           // 에러 메시지 처리
           if ($result['message'] === 'account_blocked') {
             $error = $lang['account_blocked'] . '<br><small>' . htmlspecialchars($result['reason'] ?? '') . '</small>';

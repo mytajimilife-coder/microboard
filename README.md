@@ -69,6 +69,10 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 - **Password Reset:** Secure password recovery via email with time-limited tokens.
 - **IP Ban System:** Block unwanted access by IP address with optional expiration dates.
 - **Report System:** Users can report inappropriate posts/comments with admin review workflow.
+- **Admin Activity Logs:** Track all administrator actions with detailed logging and filtering capabilities.
+- **Backup & Restore:** Full database backup and restore functionality with one-click operations.
+- **File Management:** Comprehensive file management system with storage statistics and cleanup tools.
+- **Notification System:** Real-time notifications for comments, likes, mentions, and system events.
 
 
 ### 🔍 Advanced Search Capabilities

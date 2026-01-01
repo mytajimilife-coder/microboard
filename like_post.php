@@ -63,6 +63,14 @@ try {
             'message' => $lang['like_success'] ?? '추천하였습니다.',
             'likes' => $post['wr_likes'] ?? 1
         ]);
+
+        // 알림 서비스 연동
+        $full_post = getPost($bo_table, $wr_id);
+        if ($full_post && $full_post['wr_name'] !== $mb_id) {
+            $noti_content = sprintf("누군가 [%s] 게시글을 추천했습니다! ❤️", $full_post['wr_subject']);
+            $noti_link = "view.php?id=" . $wr_id . "&bo_table=" . $bo_table;
+            create_notification($full_post['wr_name'], 'like', $noti_content, $noti_link);
+        }
         
     } elseif ($action === 'unlike') {
         // 추천 취소
