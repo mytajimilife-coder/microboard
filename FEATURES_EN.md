@@ -6,13 +6,14 @@
 ## 📋 Table of Contents
 
 1. [Core Features](#core-features)
-2. [Board Management](#board-management)
-3. [Permission System](#permission-system)
-4. [Search Features](#search-features)
-5. [SEO & Analytics Tools](#seo--analytics-tools)
-6. [Member Management](#member-management)
-7. [Security Features](#security-features)
+2. [Board & Page Management](#board--page-management)
+3. [Permission & Member System](#permission--member-system)
+4. [Notifications & Community](#notifications--community)
+5. [Admin Tools (Operations)](#admin-tools-operations)
+6. [Security Architecture](#security-architecture)
+7. [SEO & Analytics Tools](#seo--analytics-tools)
 8. [Multilingual Support](#multilingual-support)
+9. [Plugin System](#plugin-system)
 
 ---
 
@@ -258,31 +259,62 @@ In Admin Page → SEO Settings, you can easily configure various SEO and analyti
 
 ---
 
-## Security Features
+---
 
-### CSRF Protection
-- Automatic CSRF token generation in all forms
-- Request rejection on token validation failure
+## Notifications & Community
 
-### XSS Prevention
-- Automatic user input escaping
-- Dangerous tag removal when HTML allowed
-- Event handler removal
+### 🔔 Real-time Notification System
+- **Activity Alerts**: Instant notifications for new comments and likes on your posts.
+- **System Alerts**: Receive messages for level-ups, point changes, and site-wide announcements.
+- **User Interface**: Unread count badges in the header and a centralized notification center.
 
-### SQL Injection Prevention
-- PDO Prepared Statements usage
-- All query parameters bound
+---
 
-### File Upload Security
-- MIME type validation
-- Filename randomization
-- Only allowed extensions uploadable
+## Admin Tools (Operations)
 
-### Two-Factor Authentication (2FA)
-- Email-based 2FA
-- Authenticator app support (Google Authenticator, etc.)
-- QR code setup
-- Backup codes provided
+Powerful management utilities for efficient site administration.
+
+### 💾 Backup & Restoration
+- **Full DB Backup**: Create instant SQL snapshots of your entire database.
+- **Backup Management**: Download backups for local storage or delete legacy files.
+- **Easy Restore**: Restore your system to a previous state via one-click restoration.
+
+### 📋 Activity Logs & Audit
+- **Admin Logs**: Track every administrative action (settings changes, member bans, etc.).
+- **Login Audit**: Detailed tracking of every login attempt including IP and browser data.
+- **Filtering**: Search logs by date, user ID, or specific action types.
+
+### 📁 Resource Management
+- **File Manager**: Monitor total storage usage and file type distributions.
+- **Orphaned File Cleanup**: Automatically scan and remove unused files from the server.
+
+### 💰 Points & Rank Governance
+- **Manual Point Adjust**: Administrators can directly add or deduct points from any user.
+- **Transaction History**: Permanent logging of every point change for auditing.
+- **Auto Level-up**: Configurable triggers to automatically upgrade member tiers based on points.
+
+### 🚧 System Maintenance
+- **Maintenance Mode**: Lock the site for updates with custom messages for visitors.
+- **Bad Words Filter**: Automatically mask (`***`) inappropriate words in posts and comments.
+
+---
+
+## Security Architecture
+
+### 🛡️ Fundamental Security
+- **CSRF Protection**: Unique token validation for every form request.
+- **XSS Prevention**: Advanced filtering of user input to block malicious script execution.
+- **SQL Injection Prevention**: Safe database queries using PDO Prepared Statements.
+- **File Upload Security**: MIME validation, filename randomization, and execution prevention.
+
+### 🔐 Auth & Access Control
+- **Two-Factor Authentication (2FA)**: Support for Email and TOTP (Google Authenticator) codes.
+- **Brute Force Defense**: Automatic IP lockout after repeated failed login attempts.
+- **Admin IP Whitelist**: Restrict administrative panel access to trusted IP addresses only.
+
+### 🌐 System Protection
+- **Security Headers**: Forced implementation of HSTS, X-Frame-Options, and nosniff.
+- **IP Ban System**: Permanent or temporary quarantine for problematic IP addresses.
 
 ---
 
