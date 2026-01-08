@@ -2,10 +2,10 @@
 
 <div align="center">
 
-**MicroBoard**
+<!-- **MicroBoard** -->
 
-<!-- <img src="![이미지주소.png](https://mytajimilife-coder.github.io/microboard/img/logo.svg)" /> -->
-<!-- MicroBoard -->
+<img src="![이미지주소.png](https://mytajimilife-coder.github.io/microboard/img/logo.png)" />
+MicroBoard
 
 ### A Lightweight, High-Performance Community Platform
 
@@ -52,7 +52,6 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 - **Report System:** Built-in content moderation with user reporting and admin review.
 - **Visit Statistics:** Track daily/monthly visitors, unique users, and page views.
 
-
 ### 🛠️ Powerful Extensibility
 
 - **Plugin Architecture:** Hook-based system (`before_write`, `after_login`, etc.) to extend functionality without touching core code.
@@ -74,7 +73,6 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 - **File Management:** Comprehensive file management system with storage statistics and cleanup tools.
 - **Notification System:** Real-time notifications for comments, likes, mentions, and system events.
 
-
 ### 🔍 Advanced Search Capabilities
 
 - **Integrated Search:** Search across all boards simultaneously with keyword highlighting.
@@ -84,7 +82,7 @@ It is built with **vanilla PHP and MySQL**, making it easy to deploy on any stan
 
 ### ⚙️ Flexible Configuration
 
-- **Board-Level Settings:** 
+- **Board-Level Settings:**
   - Permission control (list/read/write) with level-based access
   - Editor toggle (WYSIWYG or plain text)
   - Comment system enable/disable
