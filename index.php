@@ -8,7 +8,7 @@ require_once 'inc/header.php';
 <div class="landing-hero">
     <div class="hero-content">
         <div style="margin-bottom: 1rem; display: inline-block;">
-            <span style="font-size: 4rem;">✨</span>
+            <img src="img/logo.png" alt="MicroBoard Logo" style="width: 120px; height: auto; margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.5));" />
         </div>
         <h1 class="hero-title"><?php echo $lang['welcome_to_microboard']; ?></h1>
         <p class="hero-desc"><?php echo $lang['landing_description']; ?></p>

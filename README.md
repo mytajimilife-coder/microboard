@@ -4,8 +4,9 @@
 
 <!-- **MicroBoard** -->
 
-<img src="![이미지주소.png](https://mytajimilife-coder.github.io/microboard/img/logo.png)" />
-MicroBoard
+<img src="https://mytajimilife-coder.github.io/microboard/img/logo.png" alt="MicroBoard Logo" width="200" />
+
+# MicroBoard
 
 ### A Lightweight, High-Performance Community Platform
 
